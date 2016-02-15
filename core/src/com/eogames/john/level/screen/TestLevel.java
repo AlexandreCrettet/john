@@ -1,9 +1,11 @@
-package com.eogames.john.level;
+package com.eogames.john.level.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.eogames.john.level.BaseLevel;
 import com.eogames.john.map.JohnMapRenderer;
+import com.eogames.john.utils.LevelCallback;
 
 /**
  * This class implements the abstract BaseLevel class. It means this class is defining a level.
@@ -14,9 +16,10 @@ public final class TestLevel extends BaseLevel {
   private static float startingLevelY = 680f;
   private int x = 0;
 
-  public TestLevel(AssetManager assetManager, SceneManager sceneManager) {
-    super(assetManager, sceneManager);
+  public TestLevel(AssetManager assetManager, LevelCallback levelCallback) {
+    super(assetManager, levelCallback);
     setCamera(startingLevelY);
+    loadLevel();
   }
 
   @Override
@@ -27,9 +30,9 @@ public final class TestLevel extends BaseLevel {
   }
 
   @Override
-  public void render() {
+  public void render(float delta) {
     camera.position.set(x++, 680, 0);
-    super.render();
+    super.render(delta);
     if (x == Gdx.graphics.getWidth()) {
       winState();
     }

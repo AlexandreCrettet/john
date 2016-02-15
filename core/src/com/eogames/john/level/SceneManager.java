@@ -47,7 +47,7 @@ public class SceneManager implements MenuCallback, LevelCallback {
   }
 
   private void loadLevelTest() {
-    level = new TestLevel(assetManager, this);
+    level = new com.eogames.john.level.screen.TestLevel(assetManager, this);
     level.loadLevel();
   }
 
@@ -65,7 +65,7 @@ public class SceneManager implements MenuCallback, LevelCallback {
   private void showMenu() {
     showLoadingView();
     assetManager.finishLoading();
-    view = menu;
+//    view = menu;
   }
 
   private void showLoadingView() {
@@ -75,7 +75,7 @@ public class SceneManager implements MenuCallback, LevelCallback {
   private void showLevel() {
     showLoadingView();
     assetManager.finishLoading();
-    view = level;
+//    view = level;
   }
 
   public void render() {

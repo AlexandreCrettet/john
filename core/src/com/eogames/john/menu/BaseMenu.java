@@ -1,13 +1,35 @@
 package com.eogames.john.menu;
 
-import com.eogames.john.level.SceneManager;
-import com.eogames.john.utils.BaseView;
-import com.eogames.john.utils.MenuCallback;
+import com.badlogic.gdx.Screen;
 
-public abstract class BaseMenu implements BaseView {
-  protected MenuCallback callback;
+public abstract class BaseMenu implements Screen {
+  @Override
+  public void dispose() {
 
-  public BaseMenu(SceneManager sceneManager) {
-    callback = sceneManager;
+  }
+
+  @Override
+  public void hide() {
+
+  }
+
+  @Override
+  public void resume() {
+
+  }
+
+  @Override
+  public void pause() {
+
+  }
+
+  @Override
+  public void resize(int width, int height) {
+
+  }
+
+  @Override
+  public void show() {
+
   }
 }
