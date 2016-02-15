@@ -1,21 +1,25 @@
 package com.eogames.john.level;
 
 import com.badlogic.gdx.assets.AssetManager;
+import com.eogames.john.utils.BaseView;
 import com.eogames.john.camera.LevelCamera;
 import com.eogames.john.map.JohnMapRenderer;
 import com.eogames.john.utils.CameraUtils;
+import com.eogames.john.utils.LevelCallback;
 
 /**
  * This class is the base class for every levels. You cannot create a level without extending
  * this class.
  */
-public abstract class BaseLevel {
+public abstract class BaseLevel implements BaseView {
   protected AssetManager assetManager;
   protected JohnMapRenderer renderer;
   protected LevelCamera camera;
+  protected LevelCallback callback;
 
-  public BaseLevel(AssetManager assetManager) {
+  public BaseLevel(AssetManager assetManager, SceneManager sceneManager) {
     this.assetManager = assetManager;
+    this.callback = sceneManager;
   }
 
   protected void setCamera(float startingLevelY) {
@@ -25,7 +29,7 @@ public abstract class BaseLevel {
     camera.update();
   }
 
-  protected abstract void loadLevel();
+  public abstract void loadLevel();
 
   /**
    * You have to call this super method at the end of the level render() implementation.
@@ -35,4 +39,7 @@ public abstract class BaseLevel {
     renderer.setView(camera);
     renderer.render();
   }
+
+  protected abstract void winState();
+  protected abstract void looseState();
 }
