@@ -94,7 +94,7 @@ public class SceneManager implements MenuCallback, LevelCallback {
     }
   }
 
-  public void levelFinish() {
+  public void onLevelFinished() {
     Gdx.app.log("levelFinish", "level finished properly");
     showMenu(); // it should load the last menu before going to the level
   }

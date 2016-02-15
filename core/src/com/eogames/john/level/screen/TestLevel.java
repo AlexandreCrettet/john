@@ -40,7 +40,7 @@ public final class TestLevel extends BaseLevel {
 
   @Override
   protected void winState() {
-    callback.levelFinish();
+    callback.onLevelFinished();
   }
 
   @Override
