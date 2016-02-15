@@ -5,13 +5,15 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.eogames.john.menu.BaseMenu;
 import com.eogames.john.menu.screen.MainMenuScreen;
 import com.eogames.john.utils.LevelCallback;
 
 import java.util.ArrayList;
 
-public class Drop extends Game implements LevelCallback {
+public class John extends Game implements LevelCallback {
   public AssetManager assetManager;
   public SpriteBatch batch;
   public BitmapFont font;
@@ -23,6 +25,7 @@ public class Drop extends Game implements LevelCallback {
     Gdx.app.log("height", Integer.toString(Gdx.graphics.getHeight()));
 
     assetManager = new AssetManager();
+    assetManager.setLoader(TiledMap.class, new TmxMapLoader());
     batch = new SpriteBatch();
     font = new BitmapFont();
     pullMenuScreen.add(new MainMenuScreen(this));
