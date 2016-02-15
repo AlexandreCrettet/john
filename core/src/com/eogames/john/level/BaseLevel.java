@@ -1,8 +1,9 @@
 package com.eogames.john.level;
 
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.eogames.john.camera.LevelCamera;
 import com.eogames.john.map.JohnMapRenderer;
+import com.eogames.john.utils.CameraUtils;
 
 /**
  * This class is the base class for every levels. You cannot create a level without extending
@@ -11,19 +12,16 @@ import com.eogames.john.map.JohnMapRenderer;
 public abstract class BaseLevel {
   protected AssetManager assetManager;
   protected JohnMapRenderer renderer;
-  protected OrthographicCamera camera;
-
-  protected static float VIEWPORTWIDTH = 800f;
-  protected static float VIEWPORTHEIGHT = 480f;
+  protected LevelCamera camera;
 
   public BaseLevel(AssetManager assetManager) {
     this.assetManager = assetManager;
   }
 
   protected void setCamera(float startingLevelY) {
-    camera = new OrthographicCamera();
-    camera.setToOrtho(false, VIEWPORTWIDTH, VIEWPORTHEIGHT);
-    camera.position.set(VIEWPORTWIDTH / 2, startingLevelY, 0);
+    camera = new LevelCamera();
+    camera.setToOrtho(false, CameraUtils.VIEWPORTWIDTH, CameraUtils.VIEWPORTHEIGHT);
+    camera.position.set(CameraUtils.VIEWPORTWIDTH / 2, startingLevelY, 0);
     camera.update();
   }
 

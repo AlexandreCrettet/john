@@ -3,11 +3,11 @@ package com.eogames.john;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
-import com.eogames.john.level.JohnLevelManager;
+import com.eogames.john.level.SceneManager;
 
 public class Main extends ApplicationAdapter {
   private AssetManager assetManager;
-  private JohnLevelManager levelManager;
+  private SceneManager sceneManager;
 
   @Override
   public void create() {
@@ -15,11 +15,11 @@ public class Main extends ApplicationAdapter {
     Gdx.app.log("height", Integer.toString(Gdx.graphics.getHeight()));
 
     assetManager = new AssetManager();
-    levelManager = new JohnLevelManager(assetManager);
+    sceneManager = new SceneManager(assetManager);
   }
 
   @Override
   public void render() {
-    levelManager.render();
+    sceneManager.render();
   }
 }

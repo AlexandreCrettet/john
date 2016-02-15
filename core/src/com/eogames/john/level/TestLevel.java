@@ -1,6 +1,5 @@
 package com.eogames.john.level;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -22,11 +21,6 @@ public final class TestLevel extends BaseLevel {
   }
 
   @Override
-  protected void setCamera(float startingLevelY) {
-    super.setCamera(startingLevelY);
-  }
-
-  @Override
   protected void loadLevel() {
     assetManager.setLoader(TiledMap.class, new TmxMapLoader());
     assetManager.load("test_level.tmx", TiledMap.class);
@@ -36,10 +30,7 @@ public final class TestLevel extends BaseLevel {
 
   @Override
   public void render() {
-    if (x > VIEWPORTWIDTH / 2 && x < Gdx.graphics.getWidth() - VIEWPORTWIDTH / 2) {
-      camera.position.set(x, 680, 0);
-    }
-    x++;
+    camera.position.set(x++, 680, 0);
     super.render();
   }
 }
