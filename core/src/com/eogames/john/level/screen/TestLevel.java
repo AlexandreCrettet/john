@@ -31,9 +31,10 @@ public final class TestLevel extends BaseLevel {
 
   @Override
   public void render(float delta) {
-    camera.position.set(x++, 680, 0);
+    camera.position.set(x, 680, 0);
+    x = x + 3;
     super.render(delta);
-    if (x == Gdx.graphics.getWidth()) {
+    if (x >= Gdx.graphics.getWidth()) {
       winState();
     }
   }
