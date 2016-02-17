@@ -1,4 +1,4 @@
-package com.eogames.john.menu.button;
+package com.eogames.john.menu.buttons;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;

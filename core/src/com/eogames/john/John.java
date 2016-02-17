@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.eogames.john.menu.BaseMenu;
-import com.eogames.john.menu.mainmenu.MainMenuScreen;
+import com.eogames.john.menu.screens.MainMenuScreen;
 import com.eogames.john.utils.LevelCallback;
 
 import java.util.ArrayList;
