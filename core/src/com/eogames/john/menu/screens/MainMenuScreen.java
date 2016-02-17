@@ -41,7 +41,7 @@ public class MainMenuScreen extends BaseMenu {
     worldButton.addListener(new ChangeListener() {
       @Override
       public void changed(ChangeEvent event, Actor actor) {
-        game.setScreen(new SelectWorldScreen(game));
+        game.setMenu(SelectWorldScreen.class, new SelectWorldScreen(game));
         dispose();
       }
     });

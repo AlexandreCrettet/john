@@ -1,6 +1,7 @@
 package com.eogames.john.menu.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -44,7 +45,7 @@ public class SelectWorldScreen extends BaseMenu {
     worldOneButton.addListener(new ChangeListener() {
       @Override
       public void changed(ChangeEvent event, Actor actor) {
-        game.setScreen(new WorldOneScreen(game));
+        game.setMenu(WorldOneScreen.class, new WorldOneScreen(game));
         dispose();
       }
     });
@@ -69,5 +70,12 @@ public class SelectWorldScreen extends BaseMenu {
 
     stage.act(Gdx.graphics.getDeltaTime());
     stage.draw();
+    handleBackButton();
+  }
+
+  private void handleBackButton() {
+    if (Gdx.input.isKeyPressed(Keys.BACK)) {
+      game.onBackPressed();
+    }
   }
 }
