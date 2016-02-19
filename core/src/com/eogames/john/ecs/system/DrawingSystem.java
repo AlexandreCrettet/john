@@ -24,7 +24,7 @@ public class DrawingSystem extends EntitySystem {
   }
 
   public void addedToEngine(Engine engine) {
-    entities = engine.getEntitiesFor(Family.all(TextureRegionComponent.class, PositionComponent.class).get());
+    entities = engine.getEntitiesFor(Family.one(SpriteComponent.class, TextureRegionComponent.class).get());
   }
 
   public void update(float deltaTime) {
