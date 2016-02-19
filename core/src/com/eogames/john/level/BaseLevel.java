@@ -31,15 +31,6 @@ public abstract class BaseLevel implements Screen {
 
   public abstract void loadLevel();
 
-  /**
-   * You have to call this super method at the end of the level render() implementation.
-   */
-  public void render(float delta) {
-    camera.update();
-    renderer.setView(camera);
-    renderer.render();
-  }
-
   protected abstract void winState();
   protected abstract void looseState();
 
