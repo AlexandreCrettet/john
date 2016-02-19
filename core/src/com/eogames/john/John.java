@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.eogames.john.menu.BaseMenu;
-import com.eogames.john.menu.screen.MainMenuScreen;
+import com.eogames.john.menu.screens.MainMenuScreen;
 import com.eogames.john.utils.LevelCallback;
 
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ public class John extends Game implements LevelCallback {
   public AssetManager assetManager;
   public SpriteBatch batch;
   public BitmapFont font;
-  private ArrayList<BaseMenu> pullMenuScreen = new ArrayList<BaseMenu>();
+  private ArrayList<Class<?>> pullMenuScreen = new ArrayList<Class<?>>();
 
   @Override
   public void create() {
@@ -28,8 +28,8 @@ public class John extends Game implements LevelCallback {
     assetManager.setLoader(TiledMap.class, new TmxMapLoader());
     batch = new SpriteBatch();
     font = new BitmapFont();
-    pullMenuScreen.add(new MainMenuScreen(this));
-    this.setScreen(pullMenuScreen.get(pullMenuScreen.size() - 1));
+    Gdx.input.setCatchBackKey(true);
+    setMenu(MainMenuScreen.class, new MainMenuScreen(this));
   }
 
   @Override
@@ -49,11 +49,45 @@ public class John extends Game implements LevelCallback {
   @Override
   public void onLevelFinished() {
     if (pullMenuScreen.size() > 0) {
-      this.setScreen(pullMenuScreen.get(pullMenuScreen.size() - 1));
+      displayPreviousScreen();
     }
     else {
-      pullMenuScreen.add(new MainMenuScreen(this));
-      this.setScreen(pullMenuScreen.get(pullMenuScreen.size() - 1));
+      pullMenuScreen.add(MainMenuScreen.class);
+      setScreen(new MainMenuScreen(this));
     }
+  }
+
+  public void onBackPressed() {
+    if (pullMenuScreen.size() <= 1) {
+      Gdx.app.exit();
+    }
+    else {
+      pullMenuScreen.remove(pullMenuScreen.size() - 1);
+      displayPreviousScreen();
+    }
+  }
+
+  private void displayPreviousScreen() {
+    Object screen = null;
+    Class<?> menuClass = pullMenuScreen.get(pullMenuScreen.size() - 1);
+
+    try {
+      screen = menuClass.getConstructor(John.class).newInstance(this);
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+    }
+    if (screen != null && screen instanceof BaseMenu) {
+      setScreen((BaseMenu) screen);
+    }
+    else {
+      Gdx.app.log("displayPreviousScreen", "Couldn't retrieve the screen to display");
+      Gdx.app.exit();
+    }
+  }
+
+  public void setMenu(Class<?> menuClass, BaseMenu screen) {
+    pullMenuScreen.add(menuClass);
+    setScreen(screen);
   }
 }
