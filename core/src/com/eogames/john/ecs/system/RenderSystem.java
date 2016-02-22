@@ -7,39 +7,47 @@ import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.eogames.john.ecs.components.AnimationComponent;
 import com.eogames.john.ecs.components.PositionComponent;
-import com.eogames.john.ecs.components.SpriteComponent;
 import com.eogames.john.ecs.components.TextureRegionComponent;
 
-public class DrawingSystem extends EntitySystem {
+public class RenderSystem extends EntitySystem {
   private Batch batch;
   private ImmutableArray<Entity> entities;
 
-  private ComponentMapper<SpriteComponent> sm = ComponentMapper.getFor(SpriteComponent.class);
   private ComponentMapper<TextureRegionComponent> trm = ComponentMapper.getFor(TextureRegionComponent.class);
+  private ComponentMapper<AnimationComponent> am = ComponentMapper.getFor(AnimationComponent.class);
   private ComponentMapper<PositionComponent> pm = ComponentMapper.getFor(PositionComponent.class);
 
-  public DrawingSystem(Batch batch) {
+  public RenderSystem(Batch batch) {
     this.batch = batch;
   }
 
   public void addedToEngine(Engine engine) {
-    entities = engine.getEntitiesFor(Family.one(SpriteComponent.class, TextureRegionComponent.class).get());
+    entities = engine.getEntitiesFor(Family.one(TextureRegionComponent.class,
+        AnimationComponent.class).get());
   }
 
   public void update(float deltaTime) {
-    for (int i = 0; i < entities.size(); ++i) {
-      Entity entity = entities.get(i);
-      SpriteComponent sprite = sm.get(entity);
+    for (Entity entity : entities) {
       TextureRegionComponent textureRegionComponent = trm.get(entity);
+      AnimationComponent animationComponent = am.get(entity);
       PositionComponent position = pm.get(entity);
 
-      if (sprite != null) {
-//        batch.draw(sprite.sprite, );
-      }
-      else {
+      if (textureRegionComponent != null) {
         batch.draw(textureRegionComponent.textureRegion.getTexture(), position.x, position.y,
             textureRegionComponent.width, textureRegionComponent.height);
+      }
+      else if (animationComponent != null) {
+        float animationTimeElapsed = animationComponent.timeElapsed += deltaTime;
+        TextureRegion texture = animationComponent.animation.getKeyFrame(animationTimeElapsed);
+
+        if (texture == null) {
+          continue;
+        }
+        batch.draw(texture, position.x, position.y,
+            texture.getRegionWidth(), texture.getRegionHeight());
       }
     }
   }

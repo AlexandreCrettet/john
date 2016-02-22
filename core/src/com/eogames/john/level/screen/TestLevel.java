@@ -3,17 +3,20 @@ package com.eogames.john.level.screen;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.utils.Array;
 import com.eogames.john.John;
+import com.eogames.john.ecs.components.AnimationComponent;
 import com.eogames.john.ecs.components.PositionComponent;
 import com.eogames.john.ecs.components.VelocityComponent;
 import com.eogames.john.ecs.entities.JohnEntity;
-import com.eogames.john.ecs.system.DrawingSystem;
 import com.eogames.john.ecs.system.MovementSystem;
+import com.eogames.john.ecs.system.RenderSystem;
 import com.eogames.john.level.BaseLevel;
 import com.eogames.john.map.JohnMapRenderer;
 import com.eogames.john.utils.LevelCallback;
@@ -29,7 +32,7 @@ public final class TestLevel extends BaseLevel {
   private Engine engine;
   private JohnEntity john;
   private MovementSystem movementSystem;
-  private DrawingSystem drawingSystem;
+  private RenderSystem renderSystem;
 
   private SpriteBatch batch;
   private Skin johnSkin = new Skin();
@@ -50,19 +53,22 @@ public final class TestLevel extends BaseLevel {
   }
 
   private void loadEcs() {
-    johnSkin.add("john_front", new Texture("john_front.png"));
-    TextureRegion textureRegion = new TextureRegion(new Texture("john_front.png"), 40, 60);
+    TextureAtlas spriteSheet = new TextureAtlas("sprites.txt");
+    Array<Sprite> johnRunningSkeleton = spriteSheet.createSprites("john_running/john_running");
+    Array<Sprite> johnStandingSkeleton = spriteSheet.createSprites("john_standing/john_standing");
 
     engine = new Engine();
-    john = new JohnEntity(textureRegion);
+    john = new JohnEntity();
     movementSystem = new MovementSystem();
-    drawingSystem = new DrawingSystem(batch);
+    renderSystem = new RenderSystem(batch);
 
     john.getComponent(VelocityComponent.class).x = 150.0f;
     john.getComponent(PositionComponent.class).y = startingLevelY;
+    john.getComponent(AnimationComponent.class).animation =
+        new Animation(0.06f, johnRunningSkeleton, Animation.PlayMode.LOOP_PINGPONG);
     engine.addEntity(john);
     engine.addSystem(movementSystem);
-    engine.addSystem(drawingSystem);
+    engine.addSystem(renderSystem);
   }
 
   @Override
