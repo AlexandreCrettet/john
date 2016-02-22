@@ -28,7 +28,7 @@ public class MovementSystem extends EntitySystem {
       VelocityComponent velocity = vm.get(entity);
 
       position.x += velocity.x * deltaTime;
-      position.y += velocity.y * deltaTime;
+      position.y += (velocity.y - velocity.gravity) * deltaTime;
     }
   }
 }
