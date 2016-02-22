@@ -25,9 +25,10 @@ import com.eogames.john.utils.LevelCallback;
  * This class implements the abstract BaseLevel class. It means this class is defining a level.
  */
 public final class TestLevel extends BaseLevel {
-  private static String levelName = "Test Level";
-  private static String levelMapName = "test_level.tmx";
-  private static float startingLevelY = 680f;
+  private static String LEVELNAME = "Test Level";
+  private static String LEVELMAPNAME = "test_level.tmx";
+  private static float STARTINGLEVELY = 680f;
+  private static float GRAVITY = 400.0f;
 
   private Engine engine;
   private JohnEntity john;
@@ -40,16 +41,16 @@ public final class TestLevel extends BaseLevel {
   public TestLevel(AssetManager assetManager, LevelCallback levelCallback) {
     super(assetManager, levelCallback);
     batch = ((John)levelCallback).batch;
-    setCamera(startingLevelY);
+    setCamera(STARTINGLEVELY);
     loadLevel();
     loadEcs();
   }
 
   @Override
   public void loadLevel() {
-    assetManager.load(levelMapName, TiledMap.class);
+    assetManager.load(LEVELMAPNAME, TiledMap.class);
     assetManager.finishLoading();
-    renderer = new JohnMapRenderer((TiledMap) assetManager.get(levelMapName));
+    renderer = new JohnMapRenderer((TiledMap) assetManager.get(LEVELMAPNAME));
   }
 
   private void loadEcs() {
@@ -62,8 +63,12 @@ public final class TestLevel extends BaseLevel {
     movementSystem = new MovementSystem();
     renderSystem = new RenderSystem(batch);
 
-    john.getComponent(VelocityComponent.class).x = 150.0f;
-    john.getComponent(PositionComponent.class).y = startingLevelY;
+    VelocityComponent johnVelocity = john.getComponent(VelocityComponent.class);
+    johnVelocity.x = 150.0f;
+    johnVelocity.y = 0.0f;
+    johnVelocity.gravity = GRAVITY;
+
+    john.getComponent(PositionComponent.class).y = STARTINGLEVELY;
     john.getComponent(AnimationComponent.class).animation =
         new Animation(0.06f, johnRunningSkeleton, Animation.PlayMode.LOOP_PINGPONG);
     engine.addEntity(john);
@@ -77,7 +82,7 @@ public final class TestLevel extends BaseLevel {
     float x;
 
     x = john.getComponent(PositionComponent.class).x;
-    camera.position.set(x, startingLevelY, 0);
+    camera.position.set(x, STARTINGLEVELY, 0);
     camera.update();
     renderer.setView(camera);
     renderer.render();
