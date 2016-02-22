@@ -1,0 +1,68 @@
+sprites.png
+size: 256, 512
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+john_running/john_running
+  rotate: false
+  xy: 1, 1
+  size: 96, 96
+  orig: 96, 96
+  offset: 0, 0
+  index: 1
+john_running/john_running
+  rotate: false
+  xy: 99, 1
+  size: 96, 96
+  orig: 96, 96
+  offset: 0, 0
+  index: 2
+john_running/john_running
+  rotate: false
+  xy: 1, 99
+  size: 96, 96
+  orig: 96, 96
+  offset: 0, 0
+  index: 3
+john_running/john_running
+  rotate: false
+  xy: 99, 99
+  size: 96, 96
+  orig: 96, 96
+  offset: 0, 0
+  index: 4
+john_running/john_running
+  rotate: false
+  xy: 1, 197
+  size: 96, 96
+  orig: 96, 96
+  offset: 0, 0
+  index: 5
+john_running/john_running
+  rotate: false
+  xy: 99, 197
+  size: 96, 96
+  orig: 96, 96
+  offset: 0, 0
+  index: 6
+john_running/john_running
+  rotate: false
+  xy: 1, 295
+  size: 96, 96
+  orig: 96, 96
+  offset: 0, 0
+  index: 7
+john_running/john_running
+  rotate: false
+  xy: 1, 393
+  size: 96, 96
+  orig: 96, 96
+  offset: 0, 0
+  index: 8
+john_standing/john_standing
+  rotate: false
+  xy: 99, 295
+  size: 96, 96
+  orig: 96, 96
+  offset: 0, 0
+  index: 1
