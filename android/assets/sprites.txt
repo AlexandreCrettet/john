@@ -59,7 +59,7 @@ john_running/john_running
   orig: 96, 96
   offset: 0, 0
   index: 8
-john_standing
+john_standing/john_standing
   rotate: false
   xy: 99, 295
   size: 96, 96
