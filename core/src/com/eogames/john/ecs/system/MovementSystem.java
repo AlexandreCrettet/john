@@ -78,7 +78,7 @@ public class MovementSystem extends IteratingSystem {
           position.x = tile.x - physic.width;
         }
         else {
-          position.x = tile.x + tile.height;
+          position.x = tile.x + tile.width;
         }
         velocity.x = 0.0f;
         break;
@@ -92,6 +92,9 @@ public class MovementSystem extends IteratingSystem {
     Rectangle entityRect = new Rectangle(position.x, position.y, physic.width, physic.height);
     int startX, endX, startY, endY;
 
+    if (velocity.y == velocity.gravity) {
+      return;
+    }
     if (velocity.y - velocity.gravity > 0.0f) {
       startY = Math.round(entityRect.y + physic.height + (velocity.y - velocity.gravity) * deltaTime);
       endY = Math.round(entityRect.y + physic.height);
