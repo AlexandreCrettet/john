@@ -29,9 +29,16 @@ public class MovementSystem extends IteratingSystem {
   };
   private Array<Rectangle> tiles = new Array<Rectangle>();
 
+  private TiledMapTileLayer wallsLayer;
+  private int tileHeight;
+  private int tileWidth;
+
   public MovementSystem(TiledMap tiledMap) {
     super(Family.all(PositionComponent.class, VelocityComponent.class, PhysicComponent.class).get());
     this.tiledMap = tiledMap;
+    this.wallsLayer = (TiledMapTileLayer) tiledMap.getLayers().get("walls");
+    this.tileHeight = (int) wallsLayer.getTileHeight();
+    this.tileWidth = (int) wallsLayer.getTileWidth();
   }
 
   @Override
@@ -40,20 +47,31 @@ public class MovementSystem extends IteratingSystem {
     VelocityComponent velocity = vm.get(entity);
     PhysicComponent physic = physicMapper.get(entity);
 
+    moveX(position, velocity, physic, deltaTime);
+    moveY(position, velocity, physic, deltaTime);
+  }
+
+  private void moveX(PositionComponent position, VelocityComponent velocity,
+                     PhysicComponent physic, float deltaTime) {
+    position.x += velocity.x * deltaTime;
+  }
+
+  private void moveY(PositionComponent position, VelocityComponent velocity,
+                     PhysicComponent physic, float deltaTime) {
     Rectangle entityRect = new Rectangle(position.x, position.y, physic.width, physic.height);
     int startX, endX, startY, endY;
 
     if (velocity.y - velocity.gravity > 0.0f) {
-      startY = (int) (position.y + physic.height + velocity.y - velocity.gravity);
-      endY = (int) (position.y + velocity.y - velocity.gravity);
+      startY = Math.round(entityRect.y + physic.height + (velocity.y - velocity.gravity) * deltaTime);
+      endY = Math.round(entityRect.y + physic.height);
     }
     else {
-      startY = Math.round(position.y + velocity.y - velocity.gravity);
-      endY = Math.round(position.y);
+      startY = Math.round(entityRect.y + (velocity.y - velocity.gravity) * deltaTime);
+      endY = Math.round(entityRect.y);
     }
-    startX = Math.round(position.x);
-    endX = Math.round(position.x + entityRect.getWidth());
-    getTiles(startX, startY, endX, endY, tiles);
+    startX = Math.round(entityRect.x);
+    endX = Math.round(entityRect.x + entityRect.getWidth());
+    getTiles(startX / tileWidth, startY / tileHeight, endX / tileWidth, endY / tileHeight, tiles);
     entityRect.y += velocity.y - velocity.gravity;
 
     for (Rectangle tile : tiles) {
@@ -69,15 +87,16 @@ public class MovementSystem extends IteratingSystem {
         velocity.y = velocity.gravity;
         break;
       }
+      if (tiles.get(tiles.size - 1) == tile) {
+        velocity.y = 0.0f;
+        position.y += (velocity.y - velocity.gravity) * deltaTime;
+      }
     }
 
-//    if (tiles == null || tiles.size == 0) {
-//      velocity.y = 0.0f;
-//      position.y += (velocity.y - velocity.gravity) * deltaTime;
-//    }
-
-    position.x += velocity.x * deltaTime;
-//    position.y += (velocity.y - velocity.gravity) * deltaTime;
+    if (tiles == null || tiles.size == 0) {
+      velocity.y = 0.0f;
+      position.y += (velocity.y - velocity.gravity) * deltaTime;
+    }
   }
 
   private void getTiles(int startX, int startY, int endX, int endY, Array<Rectangle> tiles)
@@ -94,7 +113,7 @@ public class MovementSystem extends IteratingSystem {
         if (cell != null)
         {
           Rectangle rect = rectPool.obtain();
-          rect.set(x, y, 1, 1);
+          rect.set(x * tileWidth, y * tileHeight, tileWidth, tileHeight);
           tiles.add(rect);
         }
       }

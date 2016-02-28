@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -12,6 +13,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.utils.Array;
 import com.eogames.john.John;
+import com.eogames.john.ecs.components.AnimationComponent;
 import com.eogames.john.ecs.components.PhysicComponent;
 import com.eogames.john.ecs.components.PositionComponent;
 import com.eogames.john.ecs.components.TextureRegionComponent;
@@ -28,8 +30,8 @@ import com.eogames.john.utils.LevelCallback;
  */
 public final class TestLevel extends BaseLevel {
   private static String LEVELNAME = "Test Level";
-  private static String LEVELMAPNAME = "level1.tmx";
-  private static float STARTINGLEVELY = 50f;
+  private static String LEVELMAPNAME = "test_level.tmx";
+  private static float STARTINGLEVELY = 140f;
   private static float GRAVITY = 20f;
 
   private Engine engine;
@@ -55,8 +57,8 @@ public final class TestLevel extends BaseLevel {
   }
 
   private void loadEcs() {
-    TextureAtlas spriteSheet = new TextureAtlas("sprites.txt");
-    Array<Sprite> johnRunningSkeleton = spriteSheet.createSprites("john_running/john_running");
+    TextureAtlas spriteSheet = new TextureAtlas("sprites-48.txt");
+    Array<Sprite> johnRunningSkeleton = spriteSheet.createSprites("john_running");
     Array<Sprite> johnStandingSkeleton = spriteSheet.createSprites("john_standing/john_standing");
 
     engine = new Engine();
@@ -71,16 +73,11 @@ public final class TestLevel extends BaseLevel {
 
     john.getComponent(PositionComponent.class).y = STARTINGLEVELY;
 
-//    john.getComponent(AnimationComponent.class).animation =
-//        new Animation(0.06f, johnRunningSkeleton, Animation.PlayMode.LOOP_PINGPONG);
-    john.getComponent(TextureRegionComponent.class).width = 40f;
-    john.getComponent(TextureRegionComponent.class).height = 60f;
-    john.getComponent(TextureRegionComponent.class).textureRegion =
-        new TextureRegion(new Texture("john_standing_1.png"));
-    john.getComponent(TextureRegionComponent.class).width = 40f;
+      john.getComponent(AnimationComponent.class).animation =
+          new Animation(0.06f, johnRunningSkeleton, Animation.PlayMode.LOOP_PINGPONG);
 
-    john.getComponent(PhysicComponent.class).width = 40f;
-    john.getComponent(PhysicComponent.class).height = 60f;
+    john.getComponent(PhysicComponent.class).width = 16f;
+    john.getComponent(PhysicComponent.class).height = 24f;
     engine.addEntity(john);
     engine.addSystem(movementSystem);
     engine.addSystem(renderSystem);
