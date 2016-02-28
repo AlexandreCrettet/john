@@ -53,6 +53,37 @@ public class MovementSystem extends IteratingSystem {
 
   private void moveX(PositionComponent position, VelocityComponent velocity,
                      PhysicComponent physic, float deltaTime) {
+    Rectangle entityRect = new Rectangle(position.x, position.y, physic.width, physic.height);
+    int startX, endX, startY, endY;
+
+    if (velocity.x == 0) {
+      return;
+    }
+    else if (velocity.x > 0) {
+      startX = Math.round(entityRect.x + entityRect.width);
+      endX = Math.round(entityRect.x + entityRect.width + velocity.x * deltaTime);
+    }
+    else {
+      startX = Math.round(entityRect.x + velocity.x * deltaTime);
+      endX = Math.round(entityRect.x);
+    }
+    startY = Math.round(entityRect.y);
+    endY = Math.round(entityRect.y + entityRect.height);
+    getTiles(startX / tileWidth, startY / tileHeight, endX / tileWidth, endY / tileHeight, tiles);
+    entityRect.x += velocity.x * deltaTime;
+
+    for (Rectangle tile : tiles) {
+      if (entityRect.overlaps(tile)) {
+        if (velocity.x > 0) {
+          position.x = tile.x - physic.width;
+        }
+        else {
+          position.x = tile.x + tile.height;
+        }
+        velocity.x = 0.0f;
+        break;
+      }
+    }
     position.x += velocity.x * deltaTime;
   }
 
@@ -72,7 +103,7 @@ public class MovementSystem extends IteratingSystem {
     startX = Math.round(entityRect.x);
     endX = Math.round(entityRect.x + entityRect.getWidth());
     getTiles(startX / tileWidth, startY / tileHeight, endX / tileWidth, endY / tileHeight, tiles);
-    entityRect.y += velocity.y - velocity.gravity;
+    entityRect.y += (velocity.y - velocity.gravity) * deltaTime;
 
     for (Rectangle tile : tiles) {
       if (entityRect.overlaps(tile)) {
@@ -85,18 +116,11 @@ public class MovementSystem extends IteratingSystem {
           position.y = tile.y + tile.height;
         }
         velocity.y = velocity.gravity;
-        break;
-      }
-      if (tiles.get(tiles.size - 1) == tile) {
-        velocity.y = 0.0f;
-        position.y += (velocity.y - velocity.gravity) * deltaTime;
+        return;
       }
     }
-
-    if (tiles == null || tiles.size == 0) {
-      velocity.y = 0.0f;
-      position.y += (velocity.y - velocity.gravity) * deltaTime;
-    }
+    velocity.y = 0.0f;
+    position.y += (velocity.y - velocity.gravity) * deltaTime;
   }
 
   private void getTiles(int startX, int startY, int endX, int endY, Array<Rectangle> tiles)
