@@ -1,0 +1,47 @@
+controls.png
+size: 225, 53
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+xboneAButton
+  rotate: false
+  xy: 1, 1
+  size: 51, 51
+  orig: 51, 51
+  offset: 0, 0
+  index: -1
+xboneBButton
+  rotate: false
+  xy: 54, 1
+  size: 51, 51
+  orig: 51, 51
+  offset: 0, 0
+  index: -1
+xboneDpadDownAlt
+  rotate: false
+  xy: 107, 1
+  size: 28, 42
+  orig: 51, 51
+  offset: 12, 4
+  index: -1
+xboneDpadLeftAlt
+  rotate: true
+  xy: 167, 1
+  size: 42, 28
+  orig: 51, 51
+  offset: 5, 11
+  index: -1
+xboneDpadRightAlt
+  rotate: true
+  xy: 197, 1
+  size: 42, 27
+  orig: 51, 51
+  offset: 5, 11
+  index: -1
+xboneDpadUpAlt
+  rotate: false
+  xy: 137, 1
+  size: 28, 42
+  orig: 51, 51
+  offset: 12, 4
+  index: -1

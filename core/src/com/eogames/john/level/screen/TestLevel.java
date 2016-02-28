@@ -58,7 +58,7 @@ public final class TestLevel extends BaseLevel {
 
   private void loadEcs() {
     TextureAtlas spriteSheet = new TextureAtlas("sprites-48.txt");
-    Array<Sprite> johnRunningSkeleton = spriteSheet.createSprites("john_running");
+    Array<Sprite> johnRunningSkeleton = spriteSheet.createSprites("john_running/john_running");
     Array<Sprite> johnStandingSkeleton = spriteSheet.createSprites("john_standing/john_standing");
 
     engine = new Engine();
