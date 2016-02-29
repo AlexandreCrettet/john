@@ -1,47 +1,47 @@
 controls.png
-size: 225, 53
+size: 498, 134
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
-xboneAButton
+button
+  rotate: false
+  xy: 394, 1
+  size: 103, 65
+  orig: 128, 128
+  offset: 14, 30
+  index: 0
+button
+  rotate: false
+  xy: 261, 1
+  size: 65, 103
+  orig: 128, 128
+  offset: 33, 11
+  index: 1
+button
+  rotate: false
+  xy: 394, 68
+  size: 103, 65
+  orig: 128, 128
+  offset: 14, 30
+  index: 2
+button
+  rotate: false
+  xy: 328, 1
+  size: 64, 103
+  orig: 128, 128
+  offset: 33, 11
+  index: 3
+button
   rotate: false
   xy: 1, 1
-  size: 51, 51
-  orig: 51, 51
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
-  index: -1
-xboneBButton
+  index: 4
+button
   rotate: false
-  xy: 54, 1
-  size: 51, 51
-  orig: 51, 51
-  offset: 0, 0
-  index: -1
-xboneDpadDownAlt
-  rotate: false
-  xy: 107, 1
-  size: 28, 42
-  orig: 51, 51
-  offset: 12, 4
-  index: -1
-xboneDpadLeftAlt
-  rotate: true
-  xy: 167, 1
-  size: 42, 28
-  orig: 51, 51
-  offset: 5, 11
-  index: -1
-xboneDpadRightAlt
-  rotate: true
-  xy: 197, 1
-  size: 42, 27
-  orig: 51, 51
-  offset: 5, 11
-  index: -1
-xboneDpadUpAlt
-  rotate: false
-  xy: 137, 1
-  size: 28, 42
-  orig: 51, 51
-  offset: 12, 4
-  index: -1
+  xy: 131, 1
+  size: 128, 127
+  orig: 128, 128
+  offset: 0, 1
+  index: 5

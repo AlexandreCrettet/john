@@ -92,9 +92,6 @@ public class MovementSystem extends IteratingSystem {
     Rectangle entityRect = new Rectangle(position.x, position.y, physic.width, physic.height);
     int startX, endX, startY, endY;
 
-    if (velocity.y == velocity.gravity) {
-      return;
-    }
     if (velocity.y - velocity.gravity > 0.0f) {
       startY = Math.round(entityRect.y + physic.height + (velocity.y - velocity.gravity) * deltaTime);
       endY = Math.round(entityRect.y + physic.height);
@@ -116,14 +113,14 @@ public class MovementSystem extends IteratingSystem {
         }
         else if (velocity.y - velocity.gravity < 0)
         {
-          position.y = tile.y + tile.height;
+          position.y = tile.y + tile.height + 1;
         }
         velocity.y = velocity.gravity;
         return;
       }
     }
-    velocity.y = 0.0f;
     position.y += (velocity.y - velocity.gravity) * deltaTime;
+    velocity.y *= 0.95f;
   }
 
   private void getTiles(int startX, int startY, int endX, int endY, Array<Rectangle> tiles)

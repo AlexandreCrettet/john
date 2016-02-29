@@ -4,24 +4,23 @@ import com.badlogic.ashley.core.Engine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.utils.Array;
 import com.eogames.john.John;
 import com.eogames.john.ecs.components.AnimationComponent;
 import com.eogames.john.ecs.components.PhysicComponent;
 import com.eogames.john.ecs.components.PositionComponent;
-import com.eogames.john.ecs.components.TextureRegionComponent;
 import com.eogames.john.ecs.components.VelocityComponent;
 import com.eogames.john.ecs.entities.JohnEntity;
+import com.eogames.john.ecs.system.ActionSystem;
 import com.eogames.john.ecs.system.MovementSystem;
 import com.eogames.john.ecs.system.RenderSystem;
 import com.eogames.john.level.BaseLevel;
+import com.eogames.john.level.UiStage;
 import com.eogames.john.map.JohnMapRenderer;
 import com.eogames.john.utils.LevelCallback;
 
@@ -30,22 +29,25 @@ import com.eogames.john.utils.LevelCallback;
  */
 public final class TestLevel extends BaseLevel {
   private static String LEVELNAME = "Test Level";
-  private static String LEVELMAPNAME = "test_level.tmx";
-  private static float STARTINGLEVELY = 140f;
-  private static float GRAVITY = 20f;
+  private static String LEVELMAPNAME = "level1.tmx";
+  private static float STARTINGLEVELY = 180f;
 
   private Engine engine;
   private JohnEntity john;
+  private ActionSystem actionSystem;
   private MovementSystem movementSystem;
   private RenderSystem renderSystem;
 
   private SpriteBatch batch;
+
+  private UiStage uiStage;
 
   public TestLevel(AssetManager assetManager, LevelCallback levelCallback) {
     super(assetManager, levelCallback);
     batch = ((John)levelCallback).batch;
     setCamera(STARTINGLEVELY);
     loadLevel();
+    loadUi();
     loadEcs();
   }
 
@@ -63,24 +65,24 @@ public final class TestLevel extends BaseLevel {
 
     engine = new Engine();
     john = new JohnEntity();
+    actionSystem = new ActionSystem(uiStage);
     movementSystem = new MovementSystem((TiledMap) assetManager.get(LEVELMAPNAME));
     renderSystem = new RenderSystem(batch);
 
-    VelocityComponent johnVelocity = john.getComponent(VelocityComponent.class);
-    johnVelocity.x = 50f;
-    johnVelocity.y = 0f;
-    johnVelocity.gravity = GRAVITY;
-
     john.getComponent(PositionComponent.class).y = STARTINGLEVELY;
-
     john.getComponent(AnimationComponent.class).animation =
         new Animation(0.06f, johnRunningSkeleton, Animation.PlayMode.LOOP_PINGPONG);
 
-    john.getComponent(PhysicComponent.class).width = 34f;
+    john.getComponent(PhysicComponent.class).width = 36f;
     john.getComponent(PhysicComponent.class).height = 48f;
     engine.addEntity(john);
+    engine.addSystem(actionSystem);
     engine.addSystem(movementSystem);
     engine.addSystem(renderSystem);
+  }
+
+  public void loadUi() {
+    uiStage = new UiStage();
   }
 
   @Override
@@ -95,6 +97,7 @@ public final class TestLevel extends BaseLevel {
     camera.update();
     renderer.setView(camera);
     renderer.render();
+    uiStage.draw();
     batch.setProjectionMatrix(camera.combined);
     batch.begin();
     engine.update(delta);
