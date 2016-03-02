@@ -78,7 +78,7 @@ public class MovementSystem extends IteratingSystem {
           position.x = tile.x - physic.width;
         }
         else {
-          position.x = tile.x + tile.height;
+          position.x = tile.x + tile.width;
         }
         velocity.x = 0.0f;
         break;
@@ -113,14 +113,14 @@ public class MovementSystem extends IteratingSystem {
         }
         else if (velocity.y - velocity.gravity < 0)
         {
-          position.y = tile.y + tile.height;
+          position.y = tile.y + tile.height + 1;
         }
         velocity.y = velocity.gravity;
         return;
       }
     }
-    velocity.y = 0.0f;
     position.y += (velocity.y - velocity.gravity) * deltaTime;
+    velocity.y *= 0.95f;
   }
 
   private void getTiles(int startX, int startY, int endX, int endY, Array<Rectangle> tiles)
