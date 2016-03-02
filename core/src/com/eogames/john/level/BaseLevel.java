@@ -2,6 +2,7 @@ package com.eogames.john.level;
 
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.eogames.john.camera.LevelCamera;
 import com.eogames.john.map.JohnMapRenderer;
 import com.eogames.john.utils.CameraUtils;
@@ -22,10 +23,13 @@ public abstract class BaseLevel implements Screen {
     this.callback = levelCallback;
   }
 
-  protected void setCamera(float startingLevelY) {
-    camera = new LevelCamera();
+  protected void setCamera(TiledMap map) {
+    int mapWidth = map.getProperties().get("width", Integer.class);
+    int mapHeight = map.getProperties().get("height", Integer.class);
+
+    camera = new LevelCamera(map);
     camera.setToOrtho(false, CameraUtils.VIEWPORTWIDTH, CameraUtils.VIEWPORTHEIGHT);
-    camera.position.set(CameraUtils.VIEWPORTWIDTH / 2, startingLevelY, 0);
+    camera.position.set(CameraUtils.VIEWPORTWIDTH / 2, CameraUtils.VIEWPORTHEIGHT / 2, 0);
     camera.update();
   }
 

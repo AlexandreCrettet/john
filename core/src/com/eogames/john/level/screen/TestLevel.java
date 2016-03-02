@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.utils.Array;
 import com.eogames.john.John;
@@ -45,8 +46,8 @@ public final class TestLevel extends BaseLevel {
   public TestLevel(AssetManager assetManager, LevelCallback levelCallback) {
     super(assetManager, levelCallback);
     batch = ((John)levelCallback).batch;
-    setCamera(STARTINGLEVELY);
     loadLevel();
+    setCamera((TiledMap) assetManager.get(LEVELMAPNAME));
     loadUi();
     loadEcs();
   }
@@ -66,15 +67,15 @@ public final class TestLevel extends BaseLevel {
     engine = new Engine();
     john = new JohnEntity();
     actionSystem = new ActionSystem(uiStage);
-    movementSystem = new MovementSystem((TiledMap) assetManager.get(LEVELMAPNAME));
+    movementSystem = new MovementSystem(renderer.getMap());
     renderSystem = new RenderSystem(batch);
 
     john.getComponent(PositionComponent.class).y = STARTINGLEVELY;
     john.getComponent(AnimationComponent.class).animation =
         new Animation(0.06f, johnRunningSkeleton, Animation.PlayMode.LOOP_PINGPONG);
 
-    john.getComponent(PhysicComponent.class).width = 36f;
-    john.getComponent(PhysicComponent.class).height = 48f;
+    john.getComponent(PhysicComponent.class).width = 34f;
+    john.getComponent(PhysicComponent.class).height = 46f;
     engine.addEntity(john);
     engine.addSystem(actionSystem);
     engine.addSystem(movementSystem);
@@ -102,7 +103,9 @@ public final class TestLevel extends BaseLevel {
     batch.begin();
     engine.update(delta);
     batch.end();
-    if (x >= Gdx.graphics.getWidth()) {
+
+    MapProperties mapProperties = renderer.getMap().getProperties();
+    if (x >= mapProperties.get("width", Integer.class) * mapProperties.get("tilewidth", Integer.class)) {
       winState();
     }
   }
