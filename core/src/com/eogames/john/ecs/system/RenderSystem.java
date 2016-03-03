@@ -9,7 +9,7 @@ import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.eogames.john.ecs.components.AnimationComponent;
-import com.eogames.john.ecs.components.PositionComponent;
+import com.eogames.john.ecs.components.TransformComponent;
 import com.eogames.john.ecs.components.TextureRegionComponent;
 
 public class RenderSystem extends EntitySystem {
@@ -18,7 +18,7 @@ public class RenderSystem extends EntitySystem {
 
   private ComponentMapper<TextureRegionComponent> trm = ComponentMapper.getFor(TextureRegionComponent.class);
   private ComponentMapper<AnimationComponent> am = ComponentMapper.getFor(AnimationComponent.class);
-  private ComponentMapper<PositionComponent> pm = ComponentMapper.getFor(PositionComponent.class);
+  private ComponentMapper<TransformComponent> tm = ComponentMapper.getFor(TransformComponent.class);
 
   public RenderSystem(Batch batch) {
     this.batch = batch;
@@ -33,10 +33,10 @@ public class RenderSystem extends EntitySystem {
     for (Entity entity : entities) {
       TextureRegionComponent textureRegionComponent = trm.get(entity);
       AnimationComponent animationComponent = am.get(entity);
-      PositionComponent position = pm.get(entity);
+      TransformComponent transform = tm.get(entity);
 
       if (textureRegionComponent != null) {
-        batch.draw(textureRegionComponent.textureRegion.getTexture(), position.x, position.y,
+        batch.draw(textureRegionComponent.textureRegion.getTexture(), transform.pos.x, transform.pos.y,
             textureRegionComponent.width, textureRegionComponent.height);
       }
       else if (animationComponent != null) {
@@ -46,7 +46,7 @@ public class RenderSystem extends EntitySystem {
         if (texture == null) {
           continue;
         }
-        batch.draw(texture, position.x, position.y,
+        batch.draw(texture, transform.pos.x, transform.pos.y,
             texture.getRegionWidth(), texture.getRegionHeight());
       }
     }

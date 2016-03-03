@@ -10,11 +10,11 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import com.eogames.john.ecs.components.PhysicComponent;
-import com.eogames.john.ecs.components.PositionComponent;
+import com.eogames.john.ecs.components.TransformComponent;
 import com.eogames.john.ecs.components.VelocityComponent;
 
 public class MovementSystem extends IteratingSystem {
-  private ComponentMapper<PositionComponent> pm = ComponentMapper.getFor(PositionComponent.class);
+  private ComponentMapper<TransformComponent> tm = ComponentMapper.getFor(TransformComponent.class);
   private ComponentMapper<VelocityComponent> vm = ComponentMapper.getFor(VelocityComponent.class);
   private ComponentMapper<PhysicComponent> physicMapper = ComponentMapper.getFor(PhysicComponent.class);
 
@@ -34,7 +34,7 @@ public class MovementSystem extends IteratingSystem {
   private int tileWidth;
 
   public MovementSystem(TiledMap tiledMap) {
-    super(Family.all(PositionComponent.class, VelocityComponent.class, PhysicComponent.class).get());
+    super(Family.all(TransformComponent.class, VelocityComponent.class, PhysicComponent.class).get());
     this.tiledMap = tiledMap;
     this.wallsLayer = (TiledMapTileLayer) tiledMap.getLayers().get("walls");
     this.tileHeight = (int) wallsLayer.getTileHeight();
@@ -43,17 +43,17 @@ public class MovementSystem extends IteratingSystem {
 
   @Override
   protected void processEntity(Entity entity, float deltaTime) {
-    PositionComponent position = pm.get(entity);
+    TransformComponent transform = tm.get(entity);
     VelocityComponent velocity = vm.get(entity);
     PhysicComponent physic = physicMapper.get(entity);
 
-    moveX(position, velocity, physic, deltaTime);
-    moveY(position, velocity, physic, deltaTime);
+    moveX(transform, velocity, physic, deltaTime);
+    moveY(transform, velocity, physic, deltaTime);
   }
 
-  private void moveX(PositionComponent position, VelocityComponent velocity,
+  private void moveX(TransformComponent transform, VelocityComponent velocity,
                      PhysicComponent physic, float deltaTime) {
-    Rectangle entityRect = new Rectangle(position.x, position.y, physic.width, physic.height);
+    Rectangle entityRect = new Rectangle(transform.pos.x, transform.pos.y, physic.width, physic.height);
     int startX, endX, startY, endY;
 
     if (velocity.x == 0) {
@@ -75,21 +75,21 @@ public class MovementSystem extends IteratingSystem {
     for (Rectangle tile : tiles) {
       if (entityRect.overlaps(tile)) {
         if (velocity.x > 0) {
-          position.x = tile.x - physic.width;
+          transform.pos.x = tile.x - physic.width;
         }
         else {
-          position.x = tile.x + tile.width;
+          transform.pos.x = tile.x + tile.width;
         }
         velocity.x = 0.0f;
         break;
       }
     }
-    position.x += velocity.x * deltaTime;
+    transform.pos.x += velocity.x * deltaTime;
   }
 
-  private void moveY(PositionComponent position, VelocityComponent velocity,
+  private void moveY(TransformComponent transform, VelocityComponent velocity,
                      PhysicComponent physic, float deltaTime) {
-    Rectangle entityRect = new Rectangle(position.x, position.y, physic.width, physic.height);
+    Rectangle entityRect = new Rectangle(transform.pos.x, transform.pos.y, physic.width, physic.height);
     int startX, endX, startY, endY;
 
     if (velocity.y - velocity.gravity > 0.0f) {
@@ -109,17 +109,17 @@ public class MovementSystem extends IteratingSystem {
       if (entityRect.overlaps(tile)) {
         if (velocity.y - velocity.gravity > 0)
         {
-          position.y = tile.y - physic.height;
+          transform.pos.y = tile.y - physic.height;
         }
         else if (velocity.y - velocity.gravity < 0)
         {
-          position.y = tile.y + tile.height + 1;
+          transform.pos.y = tile.y + tile.height + 1;
         }
         velocity.y = velocity.gravity;
         return;
       }
     }
-    position.y += (velocity.y - velocity.gravity) * deltaTime;
+    transform.pos.y += (velocity.y - velocity.gravity) * deltaTime;
     velocity.y *= 0.95f;
   }
 

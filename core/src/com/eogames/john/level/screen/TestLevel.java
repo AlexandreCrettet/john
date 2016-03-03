@@ -14,8 +14,7 @@ import com.badlogic.gdx.utils.Array;
 import com.eogames.john.John;
 import com.eogames.john.ecs.components.AnimationComponent;
 import com.eogames.john.ecs.components.PhysicComponent;
-import com.eogames.john.ecs.components.PositionComponent;
-import com.eogames.john.ecs.components.VelocityComponent;
+import com.eogames.john.ecs.components.TransformComponent;
 import com.eogames.john.ecs.entities.JohnEntity;
 import com.eogames.john.ecs.system.ActionSystem;
 import com.eogames.john.ecs.system.MovementSystem;
@@ -70,7 +69,7 @@ public final class TestLevel extends BaseLevel {
     movementSystem = new MovementSystem(renderer.getMap());
     renderSystem = new RenderSystem(batch);
 
-    john.getComponent(PositionComponent.class).y = STARTINGLEVELY;
+    john.getComponent(TransformComponent.class).pos.y = STARTINGLEVELY;
     john.getComponent(AnimationComponent.class).animation =
         new Animation(0.06f, johnRunningSkeleton, Animation.PlayMode.LOOP_PINGPONG);
 
@@ -93,7 +92,7 @@ public final class TestLevel extends BaseLevel {
     Gdx.gl.glClearColor(0.7f, 0.7f, 1.0f, 1);
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-    x = john.getComponent(PositionComponent.class).x;
+    x = john.getComponent(TransformComponent.class).pos.x;
     camera.position.set(x, STARTINGLEVELY, 0);
     camera.update();
     renderer.setView(camera);
