@@ -47,7 +47,7 @@ public class John extends Game implements LevelCallback {
   }
 
   @Override
-  public void onLevelFinished() {
+  public void onLevelFinished(boolean hasWon) {
     if (pullMenuScreen.size() > 0) {
       displayPreviousScreen();
     }
