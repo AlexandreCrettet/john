@@ -7,13 +7,16 @@ import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.eogames.john.ecs.components.AnimationComponent;
+import com.eogames.john.ecs.components.JohnComponent;
 import com.eogames.john.ecs.components.TransformComponent;
 import com.eogames.john.ecs.components.TextureRegionComponent;
 
 public class RenderSystem extends EntitySystem {
-  private Batch batch;
+  private final BitmapFont bitmap;
+  private final Batch batch;
   private ImmutableArray<Entity> entities;
 
   private ComponentMapper<TextureRegionComponent> trm = ComponentMapper.getFor(TextureRegionComponent.class);
@@ -22,6 +25,7 @@ public class RenderSystem extends EntitySystem {
 
   public RenderSystem(Batch batch) {
     this.batch = batch;
+    bitmap = new BitmapFont();
   }
 
   public void addedToEngine(Engine engine) {
@@ -50,5 +54,12 @@ public class RenderSystem extends EntitySystem {
             texture.getRegionWidth(), texture.getRegionHeight());
       }
     }
+    drawScore();
+  }
+
+  private void drawScore() {
+    Entity john = getEngine().getEntitiesFor(Family.one(JohnComponent.class).get()).first();
+    bitmap.setColor(1.0f, 1.0f, 1.0f, 1.0f);
+    bitmap.draw(batch, "Score: " + john.getComponent(JohnComponent.class).score, 25, 375);
   }
 }

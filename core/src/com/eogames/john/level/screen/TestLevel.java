@@ -20,6 +20,7 @@ import com.eogames.john.ecs.components.TransformComponent;
 import com.eogames.john.ecs.entities.CoinEntity;
 import com.eogames.john.ecs.entities.JohnEntity;
 import com.eogames.john.ecs.systems.ActionSystem;
+import com.eogames.john.ecs.systems.BonusSystem;
 import com.eogames.john.ecs.systems.MovementSystem;
 import com.eogames.john.ecs.systems.RenderSystem;
 import com.eogames.john.level.BaseLevel;
@@ -78,8 +79,8 @@ public final class TestLevel extends BaseLevel {
           coinEntity.getComponent(TransformComponent.class).pos.y = y * bonusLayer.getTileHeight();
           coinEntity.getComponent(AnimationComponent.class).animation =
               new Animation(0.05f, coinSkeleton, Animation.PlayMode.LOOP);
-          coinEntity.getComponent(PhysicComponent.class).width = 32f;
-          coinEntity.getComponent(PhysicComponent.class).height = 32f;
+          coinEntity.getComponent(PhysicComponent.class).width = coinSprite.getRegions().get(0).originalWidth;
+          coinEntity.getComponent(PhysicComponent.class).height = coinSprite.getRegions().get(0).originalHeight;
           engine.addEntity(coinEntity);
         }
       }
@@ -106,6 +107,7 @@ public final class TestLevel extends BaseLevel {
     engine.addSystem(actionSystem);
     engine.addSystem(movementSystem);
     engine.addSystem(renderSystem);
+    engine.addSystem(new BonusSystem());
   }
 
   public void loadUi() {
