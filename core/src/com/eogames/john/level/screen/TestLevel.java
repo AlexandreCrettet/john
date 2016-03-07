@@ -74,8 +74,8 @@ public final class TestLevel extends BaseLevel {
         TiledMapTile tile = cell.getTile();
         if (tile.getProperties().containsKey("coin")) {
           CoinEntity coinEntity = new CoinEntity(Integer.parseInt((String) tile.getProperties().get("coin")));
-          coinEntity.getComponent(TransformComponent.class).pos.x = x * 16f;
-          coinEntity.getComponent(TransformComponent.class).pos.y = y * 16f;
+          coinEntity.getComponent(TransformComponent.class).pos.x = x * bonusLayer.getTileWidth();
+          coinEntity.getComponent(TransformComponent.class).pos.y = y * bonusLayer.getTileHeight();
           coinEntity.getComponent(AnimationComponent.class).animation =
               new Animation(0.05f, coinSkeleton, Animation.PlayMode.LOOP);
           coinEntity.getComponent(PhysicComponent.class).width = 32f;
