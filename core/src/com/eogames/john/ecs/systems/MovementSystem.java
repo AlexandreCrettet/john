@@ -1,4 +1,4 @@
-package com.eogames.john.ecs.system;
+package com.eogames.john.ecs.systems;
 
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
@@ -18,7 +18,6 @@ public class MovementSystem extends IteratingSystem {
   private ComponentMapper<VelocityComponent> vm = ComponentMapper.getFor(VelocityComponent.class);
   private ComponentMapper<PhysicComponent> physicMapper = ComponentMapper.getFor(PhysicComponent.class);
 
-  private TiledMap tiledMap;
   private Pool<Rectangle> rectPool = new Pool<Rectangle>()
   {
     @Override
@@ -35,7 +34,6 @@ public class MovementSystem extends IteratingSystem {
 
   public MovementSystem(TiledMap tiledMap) {
     super(Family.all(TransformComponent.class, VelocityComponent.class, PhysicComponent.class).get());
-    this.tiledMap = tiledMap;
     this.wallsLayer = (TiledMapTileLayer) tiledMap.getLayers().get("walls");
     this.tileHeight = (int) wallsLayer.getTileHeight();
     this.tileWidth = (int) wallsLayer.getTileWidth();
@@ -125,15 +123,13 @@ public class MovementSystem extends IteratingSystem {
 
   private void getTiles(int startX, int startY, int endX, int endY, Array<Rectangle> tiles)
   {
-    TiledMapTileLayer layer = (TiledMapTileLayer) tiledMap.getLayers().get("walls");
-
     rectPool.freeAll(tiles);
     tiles.clear();
     for (int y = startY; y <= endY; y++)
     {
       for (int x = startX; x <= endX; x++)
       {
-        TiledMapTileLayer.Cell cell = layer.getCell(x, y);
+        TiledMapTileLayer.Cell cell = this.wallsLayer.getCell(x, y);
         if (cell != null)
         {
           Rectangle rect = rectPool.obtain();

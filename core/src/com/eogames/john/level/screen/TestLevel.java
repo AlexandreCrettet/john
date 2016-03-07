@@ -10,15 +10,18 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTile;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.utils.Array;
 import com.eogames.john.John;
 import com.eogames.john.ecs.components.AnimationComponent;
 import com.eogames.john.ecs.components.PhysicComponent;
 import com.eogames.john.ecs.components.TransformComponent;
+import com.eogames.john.ecs.entities.CoinEntity;
 import com.eogames.john.ecs.entities.JohnEntity;
-import com.eogames.john.ecs.system.ActionSystem;
-import com.eogames.john.ecs.system.MovementSystem;
-import com.eogames.john.ecs.system.RenderSystem;
+import com.eogames.john.ecs.systems.ActionSystem;
+import com.eogames.john.ecs.systems.MovementSystem;
+import com.eogames.john.ecs.systems.RenderSystem;
 import com.eogames.john.level.BaseLevel;
 import com.eogames.john.level.UiStage;
 import com.eogames.john.map.JohnMapRenderer;
@@ -45,6 +48,7 @@ public final class TestLevel extends BaseLevel {
   public TestLevel(AssetManager assetManager, LevelCallback levelCallback) {
     super(assetManager, levelCallback);
     batch = ((John)levelCallback).batch;
+    engine = new Engine();
     loadLevel();
     setCamera((TiledMap) assetManager.get(LEVELMAPNAME));
     loadUi();
@@ -56,6 +60,30 @@ public final class TestLevel extends BaseLevel {
     assetManager.load(LEVELMAPNAME, TiledMap.class);
     assetManager.finishLoading();
     renderer = new JohnMapRenderer((TiledMap) assetManager.get(LEVELMAPNAME));
+
+    TextureAtlas coinSprite = new TextureAtlas("coin.txt");
+    Array<Sprite> coinSkeleton = coinSprite.createSprites("coin_spinning");
+
+    TiledMapTileLayer bonusLayer = (TiledMapTileLayer) renderer.getMap().getLayers().get(2);
+    for (int x = 0; x < bonusLayer.getWidth(); x++) {
+      for (int y = 0; y < bonusLayer.getHeight(); y++) {
+        TiledMapTileLayer.Cell cell = bonusLayer.getCell(x, y);
+        if (cell == null) {
+          continue;
+        }
+        TiledMapTile tile = cell.getTile();
+        if (tile.getProperties().containsKey("coin")) {
+          CoinEntity coinEntity = new CoinEntity(Integer.parseInt((String) tile.getProperties().get("coin")));
+          coinEntity.getComponent(TransformComponent.class).pos.x = x * 16f;
+          coinEntity.getComponent(TransformComponent.class).pos.y = y * 16f;
+          coinEntity.getComponent(AnimationComponent.class).animation =
+              new Animation(0.05f, coinSkeleton, Animation.PlayMode.LOOP);
+          coinEntity.getComponent(PhysicComponent.class).width = 32f;
+          coinEntity.getComponent(PhysicComponent.class).height = 32f;
+          engine.addEntity(coinEntity);
+        }
+      }
+    }
   }
 
   private void loadEcs() {
@@ -63,7 +91,6 @@ public final class TestLevel extends BaseLevel {
     Array<Sprite> johnRunningSkeleton = spriteSheet.createSprites("john_running/john_running");
     Array<Sprite> johnStandingSkeleton = spriteSheet.createSprites("john_standing/john_standing");
 
-    engine = new Engine();
     john = new JohnEntity();
     actionSystem = new ActionSystem(uiStage);
     movementSystem = new MovementSystem(renderer.getMap());

@@ -1,4 +1,4 @@
-package com.eogames.john.ecs.system;
+package com.eogames.john.ecs.systems;
 
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
