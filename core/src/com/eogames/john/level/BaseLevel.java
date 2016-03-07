@@ -35,8 +35,7 @@ public abstract class BaseLevel implements Screen {
 
   public abstract void loadLevel();
 
-  protected abstract void winState();
-  protected abstract void looseState();
+  protected abstract void endLevelState(boolean state);
 
   @Override
   public void show() {

@@ -16,6 +16,7 @@ import com.badlogic.gdx.utils.Array;
 import com.eogames.john.John;
 import com.eogames.john.ecs.components.AnimationComponent;
 import com.eogames.john.ecs.components.EnemyComponent;
+import com.eogames.john.ecs.components.LifeComponent;
 import com.eogames.john.ecs.components.PhysicComponent;
 import com.eogames.john.ecs.components.TextureRegionComponent;
 import com.eogames.john.ecs.components.TransformComponent;
@@ -28,6 +29,7 @@ import com.eogames.john.ecs.systems.BonusSystem;
 import com.eogames.john.ecs.systems.EnemySystem;
 import com.eogames.john.ecs.systems.MovementSystem;
 import com.eogames.john.ecs.systems.RenderSystem;
+import com.eogames.john.ecs.system.LifeSystem;
 import com.eogames.john.level.BaseLevel;
 import com.eogames.john.level.UiStage;
 import com.eogames.john.map.JohnMapRenderer;
@@ -43,9 +45,6 @@ public final class TestLevel extends BaseLevel {
 
   private Engine engine;
   private JohnEntity john;
-  private ActionSystem actionSystem;
-  private MovementSystem movementSystem;
-  private RenderSystem renderSystem;
 
   private SpriteBatch batch;
 
@@ -122,24 +121,27 @@ public final class TestLevel extends BaseLevel {
   }
 
   private void loadEcs() {
-    TextureAtlas spriteSheet = new TextureAtlas("sprites-48.txt");
+    ActionSystem actionSystem = new ActionSystem(uiStage);
+    MovementSystem movementSystem = new MovementSystem(renderer.getMap());
+    RenderSystem renderSystem = new RenderSystem(batch);
+    LifeSystem lifeSystem = new LifeSystem();
+
+    TextureAtlas spriteSheet = new TextureAtlas("sprites16.txt");
     Array<Sprite> johnRunningSkeleton = spriteSheet.createSprites("john_running/john_running");
     Array<Sprite> johnStandingSkeleton = spriteSheet.createSprites("john_standing/john_standing");
 
     john = new JohnEntity();
-    actionSystem = new ActionSystem(uiStage);
-    movementSystem = new MovementSystem(renderer.getMap());
-    renderSystem = new RenderSystem(batch);
 
     john.getComponent(TransformComponent.class).pos.y = STARTINGLEVELY;
     john.getComponent(AnimationComponent.class).animation =
         new Animation(0.06f, johnRunningSkeleton, Animation.PlayMode.LOOP_PINGPONG);
+    john.getComponent(PhysicComponent.class).width = 14f;
+    john.getComponent(PhysicComponent.class).height = 22f;
 
-    john.getComponent(PhysicComponent.class).width = 34f;
-    john.getComponent(PhysicComponent.class).height = 46f;
     engine.addEntity(john);
     engine.addSystem(actionSystem);
     engine.addSystem(movementSystem);
+    engine.addSystem(lifeSystem);
     engine.addSystem(renderSystem);
     engine.addSystem(new BonusSystem());
     engine.addSystem(new EnemySystem());
@@ -168,18 +170,16 @@ public final class TestLevel extends BaseLevel {
     batch.end();
 
     MapProperties mapProperties = renderer.getMap().getProperties();
-    if (x >= mapProperties.get("width", Integer.class) * mapProperties.get("tilewidth", Integer.class)) {
-      winState();
+    if (john.getComponent(LifeComponent.class).lives == 0) {
+      endLevelState(false);
+    }
+    else if (x >= mapProperties.get("width", Integer.class) * mapProperties.get("tilewidth", Integer.class)) {
+      endLevelState(true);
     }
   }
 
   @Override
-  protected void winState() {
-    callback.onLevelFinished();
-  }
-
-  @Override
-  protected void looseState() {
-    // restart the level or go back to menu ????
+  protected void endLevelState(boolean hasWon) {
+    callback.onLevelFinished(hasWon);
   }
 }

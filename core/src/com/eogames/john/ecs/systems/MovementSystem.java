@@ -1,5 +1,6 @@
 package com.eogames.john.ecs.systems;
 
+import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
@@ -11,9 +12,17 @@ import com.badlogic.gdx.utils.Pool;
 import com.eogames.john.ecs.components.EnemyComponent;
 import com.eogames.john.ecs.components.PhysicComponent;
 import com.eogames.john.ecs.components.TransformComponent;
+import com.eogames.john.ecs.components.StateComponent;
 import com.eogames.john.ecs.components.VelocityComponent;
+import com.eogames.john.ecs.entities.JohnEntity;
 
 public class MovementSystem extends IteratingSystem {
+  private ComponentMapper<TransformComponent> tm = ComponentMapper.getFor(TransformComponent.class);
+  private ComponentMapper<VelocityComponent> vm = ComponentMapper.getFor(VelocityComponent.class);
+  private ComponentMapper<PhysicComponent> physicMapper = ComponentMapper.getFor(PhysicComponent.class);
+  private ComponentMapper<StateComponent> stateMapper = ComponentMapper.getFor(StateComponent.class);
+
+  private TiledMap tiledMap;
   private Pool<Rectangle> rectPool = new Pool<Rectangle>()
   {
     @Override
@@ -30,6 +39,7 @@ public class MovementSystem extends IteratingSystem {
 
   public MovementSystem(TiledMap tiledMap) {
     super(Family.all(TransformComponent.class, VelocityComponent.class, PhysicComponent.class).get());
+    this.tiledMap = tiledMap;
     this.wallsLayer = (TiledMapTileLayer) tiledMap.getLayers().get("walls");
     this.tileHeight = (int) wallsLayer.getTileHeight();
     this.tileWidth = (int) wallsLayer.getTileWidth();
@@ -37,8 +47,18 @@ public class MovementSystem extends IteratingSystem {
 
   @Override
   protected void processEntity(Entity entity, float deltaTime) {
+    TransformComponent transform = tm.get(entity);
+    VelocityComponent velocity = vm.get(entity);
+    PhysicComponent physic = physicMapper.get(entity);
+    StateComponent state = stateMapper.get(entity);
+
     moveX(entity, deltaTime);
     moveY(entity, deltaTime);
+    if (entity instanceof JohnEntity) {
+      if (!state.isInvincible) {
+        checkCollisionWithTraps(state, transform, physic);
+      }
+    }
   }
 
   private void moveX(Entity entity, float deltaTime) {
@@ -61,7 +81,8 @@ public class MovementSystem extends IteratingSystem {
     }
     startY = Math.round(entityRect.y);
     endY = Math.round(entityRect.y + entityRect.height);
-    getTiles(startX / tileWidth, startY / tileHeight, endX / tileWidth, endY / tileHeight, tiles);
+    getTiles(startX / tileWidth, startY / tileHeight, endX / tileWidth, endY / tileHeight, tiles,
+    "walls");
     entityRect.x += velocity.x * deltaTime;
 
     for (Rectangle tile : tiles) {
@@ -101,7 +122,8 @@ public class MovementSystem extends IteratingSystem {
     }
     startX = Math.round(entityRect.x);
     endX = Math.round(entityRect.x + entityRect.getWidth());
-    getTiles(startX / tileWidth, startY / tileHeight, endX / tileWidth, endY / tileHeight, tiles);
+    getTiles(startX / tileWidth, startY / tileHeight, endX / tileWidth, endY / tileHeight, tiles,
+        "walls");
     entityRect.y += (velocity.y - velocity.gravity) * deltaTime;
 
     for (Rectangle tile : tiles) {
@@ -122,21 +144,39 @@ public class MovementSystem extends IteratingSystem {
     velocity.y *= 0.95f;
   }
 
-  private void getTiles(int startX, int startY, int endX, int endY, Array<Rectangle> tiles)
+  private void getTiles(int startX, int startY, int endX, int endY, Array<Rectangle> tiles,
+                        String layerName)
   {
+    TiledMapTileLayer layer = (TiledMapTileLayer) tiledMap.getLayers().get(layerName);
+
     rectPool.freeAll(tiles);
     tiles.clear();
     for (int y = startY; y <= endY; y++)
     {
       for (int x = startX; x <= endX; x++)
       {
-        TiledMapTileLayer.Cell cell = this.wallsLayer.getCell(x, y);
+        TiledMapTileLayer.Cell cell = layer.getCell(x, y);
         if (cell != null)
         {
           Rectangle rect = rectPool.obtain();
           rect.set(x * tileWidth, y * tileHeight, tileWidth, tileHeight);
           tiles.add(rect);
         }
+      }
+    }
+  }
+
+  private void checkCollisionWithTraps(StateComponent state, TransformComponent transform, PhysicComponent physic) {
+    Rectangle entityRec = new Rectangle();
+    int startX = Math.round((entityRec.x = transform.pos.x) / tileWidth);
+    int startY = Math.round((entityRec.y = transform.pos.y) / tileHeight);
+    int endX = Math.round((entityRec.width = (transform.pos.x + physic.width)) / tileWidth);
+    int endY = Math.round((entityRec.height = (transform.pos.y + physic.height)) / tileHeight);
+
+    getTiles(startX, startY, endX, endY, tiles, "traps");
+    for (Rectangle tile : tiles) {
+      if (entityRec.overlaps(tile)) {
+        state.hasBeenTouched = true;
       }
     }
   }
