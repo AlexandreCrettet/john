@@ -63,4 +63,9 @@ public class MainMenuScreen extends BaseMenu {
     stage.act(Gdx.graphics.getDeltaTime());
     stage.draw();
   }
+
+  @Override
+  public void dispose() {
+    stage.dispose();
+  }
 }

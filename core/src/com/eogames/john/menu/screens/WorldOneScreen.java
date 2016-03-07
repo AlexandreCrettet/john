@@ -79,4 +79,9 @@ public class WorldOneScreen extends BaseMenu {
       game.onBackPressed();
     }
   }
+
+  @Override
+  public void dispose() {
+    stage.dispose();
+  }
 }
