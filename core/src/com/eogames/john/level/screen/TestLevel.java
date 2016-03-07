@@ -15,12 +15,17 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.utils.Array;
 import com.eogames.john.John;
 import com.eogames.john.ecs.components.AnimationComponent;
+import com.eogames.john.ecs.components.EnemyComponent;
 import com.eogames.john.ecs.components.PhysicComponent;
+import com.eogames.john.ecs.components.TextureRegionComponent;
 import com.eogames.john.ecs.components.TransformComponent;
+import com.eogames.john.ecs.components.VelocityComponent;
 import com.eogames.john.ecs.entities.CoinEntity;
+import com.eogames.john.ecs.entities.EnemyEntity;
 import com.eogames.john.ecs.entities.JohnEntity;
 import com.eogames.john.ecs.systems.ActionSystem;
 import com.eogames.john.ecs.systems.BonusSystem;
+import com.eogames.john.ecs.systems.EnemySystem;
 import com.eogames.john.ecs.systems.MovementSystem;
 import com.eogames.john.ecs.systems.RenderSystem;
 import com.eogames.john.level.BaseLevel;
@@ -61,7 +66,11 @@ public final class TestLevel extends BaseLevel {
     assetManager.load(LEVELMAPNAME, TiledMap.class);
     assetManager.finishLoading();
     renderer = new JohnMapRenderer((TiledMap) assetManager.get(LEVELMAPNAME));
+    loadBonus();
+    loadEnemies();
+  }
 
+  private void loadBonus() {
     TextureAtlas coinSprite = new TextureAtlas("coin.txt");
     Array<Sprite> coinSkeleton = coinSprite.createSprites("coin_spinning");
 
@@ -82,6 +91,31 @@ public final class TestLevel extends BaseLevel {
           coinEntity.getComponent(PhysicComponent.class).width = coinSprite.getRegions().get(0).originalWidth;
           coinEntity.getComponent(PhysicComponent.class).height = coinSprite.getRegions().get(0).originalHeight;
           engine.addEntity(coinEntity);
+        }
+      }
+    }
+  }
+
+  private void loadEnemies() {
+    TiledMapTileLayer enemyLayer = (TiledMapTileLayer) renderer.getMap().getLayers().get(3);
+    for (int x = 0; x < enemyLayer.getWidth(); x++) {
+      for (int y = 0; y < enemyLayer.getHeight(); y++) {
+        TiledMapTileLayer.Cell cell = enemyLayer.getCell(x, y);
+        if (cell == null) {
+          continue;
+        }
+        TiledMapTile tile = cell.getTile();
+        if (tile.getProperties().containsKey("enemy")) {
+          EnemyEntity enemyEntity = new EnemyEntity();
+          enemyEntity.getComponent(TransformComponent.class).pos.x = x * enemyLayer.getTileWidth();
+          enemyEntity.getComponent(TransformComponent.class).pos.y = y * enemyLayer.getTileHeight();
+          enemyEntity.getComponent(TextureRegionComponent.class).textureRegion = tile.getTextureRegion();
+          enemyEntity.getComponent(TextureRegionComponent.class).width = tile.getTextureRegion().getRegionWidth();
+          enemyEntity.getComponent(TextureRegionComponent.class).height = tile.getTextureRegion().getRegionHeight();
+          enemyEntity.getComponent(PhysicComponent.class).width = tile.getTextureRegion().getRegionWidth();
+          enemyEntity.getComponent(PhysicComponent.class).height = tile.getTextureRegion().getRegionHeight();
+          enemyEntity.getComponent(VelocityComponent.class).x = enemyEntity.getComponent(EnemyComponent.class).speed;
+          engine.addEntity(enemyEntity);
         }
       }
     }
@@ -108,6 +142,7 @@ public final class TestLevel extends BaseLevel {
     engine.addSystem(movementSystem);
     engine.addSystem(renderSystem);
     engine.addSystem(new BonusSystem());
+    engine.addSystem(new EnemySystem());
   }
 
   public void loadUi() {

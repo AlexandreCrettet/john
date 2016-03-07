@@ -1,6 +1,5 @@
 package com.eogames.john.ecs.systems;
 
-import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
@@ -9,15 +8,12 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
+import com.eogames.john.ecs.components.EnemyComponent;
 import com.eogames.john.ecs.components.PhysicComponent;
 import com.eogames.john.ecs.components.TransformComponent;
 import com.eogames.john.ecs.components.VelocityComponent;
 
 public class MovementSystem extends IteratingSystem {
-  private ComponentMapper<TransformComponent> tm = ComponentMapper.getFor(TransformComponent.class);
-  private ComponentMapper<VelocityComponent> vm = ComponentMapper.getFor(VelocityComponent.class);
-  private ComponentMapper<PhysicComponent> physicMapper = ComponentMapper.getFor(PhysicComponent.class);
-
   private Pool<Rectangle> rectPool = new Pool<Rectangle>()
   {
     @Override
@@ -41,16 +37,14 @@ public class MovementSystem extends IteratingSystem {
 
   @Override
   protected void processEntity(Entity entity, float deltaTime) {
-    TransformComponent transform = tm.get(entity);
-    VelocityComponent velocity = vm.get(entity);
-    PhysicComponent physic = physicMapper.get(entity);
-
-    moveX(transform, velocity, physic, deltaTime);
-    moveY(transform, velocity, physic, deltaTime);
+    moveX(entity, deltaTime);
+    moveY(entity, deltaTime);
   }
 
-  private void moveX(TransformComponent transform, VelocityComponent velocity,
-                     PhysicComponent physic, float deltaTime) {
+  private void moveX(Entity entity, float deltaTime) {
+    TransformComponent transform = entity.getComponent(TransformComponent.class);
+    PhysicComponent physic = entity.getComponent(PhysicComponent.class);
+    VelocityComponent velocity = entity.getComponent(VelocityComponent.class);
     Rectangle entityRect = new Rectangle(transform.pos.x, transform.pos.y, physic.width, physic.height);
     int startX, endX, startY, endY;
 
@@ -78,15 +72,22 @@ public class MovementSystem extends IteratingSystem {
         else {
           transform.pos.x = tile.x + tile.width;
         }
-        velocity.x = 0.0f;
+        EnemyComponent enemy = entity.getComponent(EnemyComponent.class);
+        if (enemy != null) {
+          velocity.x *= -1.0f;
+        } else {
+          velocity.x = 0.0f;
+        }
         break;
       }
     }
     transform.pos.x += velocity.x * deltaTime;
   }
 
-  private void moveY(TransformComponent transform, VelocityComponent velocity,
-                     PhysicComponent physic, float deltaTime) {
+  private void moveY(Entity entity, float deltaTime) {
+    TransformComponent transform = entity.getComponent(TransformComponent.class);
+    PhysicComponent physic = entity.getComponent(PhysicComponent.class);
+    VelocityComponent velocity = entity.getComponent(VelocityComponent.class);
     Rectangle entityRect = new Rectangle(transform.pos.x, transform.pos.y, physic.width, physic.height);
     int startX, endX, startY, endY;
 
