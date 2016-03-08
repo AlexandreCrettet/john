@@ -30,6 +30,7 @@ import com.eogames.john.ecs.systems.EnemySystem;
 import com.eogames.john.ecs.systems.MovementSystem;
 import com.eogames.john.ecs.systems.RenderSystem;
 import com.eogames.john.ecs.systems.LifeSystem;
+import com.eogames.john.ecs.systems.StateSystem;
 import com.eogames.john.level.BaseLevel;
 import com.eogames.john.level.UiStage;
 import com.eogames.john.map.JohnMapRenderer;
@@ -41,13 +42,11 @@ import com.eogames.john.utils.LevelCallback;
 public final class TestLevel extends BaseLevel {
   private static String LEVELNAME = "Test Level";
   private static String LEVELMAPNAME = "level1.tmx";
-  private static float STARTINGLEVELY = 180f;
+  private static float STARTINGLEVELY = 200f;
 
   private Engine engine;
   private JohnEntity john;
-
   private SpriteBatch batch;
-
   private UiStage uiStage;
 
   public TestLevel(AssetManager assetManager, LevelCallback levelCallback) {
@@ -85,7 +84,7 @@ public final class TestLevel extends BaseLevel {
           CoinEntity coinEntity = new CoinEntity(Integer.parseInt((String) tile.getProperties().get("coin")));
           coinEntity.getComponent(TransformComponent.class).pos.x = x * bonusLayer.getTileWidth();
           coinEntity.getComponent(TransformComponent.class).pos.y = y * bonusLayer.getTileHeight();
-          coinEntity.getComponent(AnimationComponent.class).animation =
+          coinEntity.getComponent(AnimationComponent.class).idlingAnimation =
               new Animation(0.05f, coinSkeleton, Animation.PlayMode.LOOP);
           coinEntity.getComponent(PhysicComponent.class).width = coinSprite.getRegions().get(0).originalWidth;
           coinEntity.getComponent(PhysicComponent.class).height = coinSprite.getRegions().get(0).originalHeight;
@@ -128,13 +127,15 @@ public final class TestLevel extends BaseLevel {
 
     TextureAtlas spriteSheet = new TextureAtlas("sprites16.txt");
     Array<Sprite> johnRunningSkeleton = spriteSheet.createSprites("john_running/john_running");
-    Array<Sprite> johnStandingSkeleton = spriteSheet.createSprites("john_standing/john_standing");
+    Array<Sprite> johnIdlingSkeleton = spriteSheet.createSprites("john_standing/john_standing");
 
     john = new JohnEntity();
 
     john.getComponent(TransformComponent.class).pos.y = STARTINGLEVELY;
-    john.getComponent(AnimationComponent.class).animation =
+    john.getComponent(AnimationComponent.class).runningAnimation =
         new Animation(0.06f, johnRunningSkeleton, Animation.PlayMode.LOOP_PINGPONG);
+    john.getComponent(AnimationComponent.class).idlingAnimation =
+        new Animation(0.2f, johnIdlingSkeleton, Animation.PlayMode.LOOP);
     john.getComponent(PhysicComponent.class).width = 14f;
     john.getComponent(PhysicComponent.class).height = 22f;
 
@@ -145,6 +146,7 @@ public final class TestLevel extends BaseLevel {
     engine.addSystem(renderSystem);
     engine.addSystem(new BonusSystem());
     engine.addSystem(new EnemySystem());
+    engine.addSystem(new StateSystem());
   }
 
   public void loadUi() {

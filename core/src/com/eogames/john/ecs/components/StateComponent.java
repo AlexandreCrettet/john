@@ -11,4 +11,7 @@ public class StateComponent implements Component {
   public boolean hasBeenTouched = false;
   public boolean isInvincible = false;
   public boolean isDead = false;
+  public boolean isIdling = true;
+  public boolean isWalking = false;
+  public boolean isRunning = false;
 }
