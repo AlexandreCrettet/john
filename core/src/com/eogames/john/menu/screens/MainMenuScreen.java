@@ -1,6 +1,7 @@
 package com.eogames.john.menu.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -62,6 +63,13 @@ public class MainMenuScreen extends BaseMenu {
 
     stage.act(Gdx.graphics.getDeltaTime());
     stage.draw();
+    handleBackButton();
+  }
+
+  private void handleBackButton() {
+    if (Gdx.input.isKeyPressed(Input.Keys.BACK)) {
+      game.onBackPressed();
+    }
   }
 
   @Override
