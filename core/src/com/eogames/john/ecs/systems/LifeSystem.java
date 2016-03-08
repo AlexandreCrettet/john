@@ -1,4 +1,4 @@
-package com.eogames.john.ecs.system;
+package com.eogames.john.ecs.systems;
 
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
@@ -32,6 +32,9 @@ public class LifeSystem extends IteratingSystem {
     else if (state.isInvincible && state.timeState > state.MAXINVINCIBLESTATE) {
       state.isInvincible = false;
       state.timeState = 0.0f;
+    }
+    else if (state.isDead) {
+      life.lives = 0;
     }
     state.timeState += deltaTime;
   }
