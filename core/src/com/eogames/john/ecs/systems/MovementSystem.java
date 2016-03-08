@@ -115,9 +115,9 @@ public class MovementSystem extends IteratingSystem {
     Rectangle entityRect = new Rectangle(transform.pos.x, transform.pos.y, physic.width, physic.height);
     int startX, endX, startY, endY;
 
-    if (velocity.y - velocity.gravity > 0.0f) {
-      startY = Math.round(entityRect.y + physic.height + (velocity.y - velocity.gravity) * deltaTime);
-      endY = Math.round(entityRect.y + physic.height);
+    if (velocity.y > velocity.gravity) {
+      startY = Math.round(entityRect.y + physic.height);
+      endY = Math.round(entityRect.y + physic.height + (velocity.y - velocity.gravity) * deltaTime);
     }
     else {
       startY = Math.round(entityRect.y + (velocity.y - velocity.gravity) * deltaTime);
@@ -131,15 +131,14 @@ public class MovementSystem extends IteratingSystem {
 
     for (Rectangle tile : tiles) {
       if (entityRect.overlaps(tile)) {
-        if (velocity.y - velocity.gravity > 0)
-        {
-          transform.pos.y = tile.y - physic.height;
+        if (velocity.y > velocity.gravity) {
+          transform.pos.y = tile.y - physic.height - 1;
+          velocity.y = 0.0f;
         }
-        else if (velocity.y - velocity.gravity < 0)
-        {
+        else if (velocity.y - velocity.gravity < 0) {
           transform.pos.y = tile.y + tile.height + 1;
+          velocity.y = velocity.gravity;
         }
-        velocity.y = velocity.gravity;
         return;
       }
     }

@@ -24,7 +24,6 @@ public class ActionSystem extends IteratingSystem {
   @Override
   public void processEntity(Entity entity, float deltaTime) {
     VelocityComponent velocity = vm.get(entity);
-    StateComponent state = sm.get(entity);
 
     if (uiStage.getRightButton().isPressed()) {
       if (velocity.x > velocity.maxX) {
