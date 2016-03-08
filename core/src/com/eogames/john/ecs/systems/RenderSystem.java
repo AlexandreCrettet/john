@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.eogames.john.ecs.components.AnimationComponent;
 import com.eogames.john.ecs.components.JohnComponent;
+import com.eogames.john.ecs.components.StateComponent;
 import com.eogames.john.ecs.components.TransformComponent;
 import com.eogames.john.ecs.components.TextureRegionComponent;
 
@@ -22,6 +23,7 @@ public class RenderSystem extends EntitySystem {
   private ComponentMapper<TextureRegionComponent> trm = ComponentMapper.getFor(TextureRegionComponent.class);
   private ComponentMapper<AnimationComponent> am = ComponentMapper.getFor(AnimationComponent.class);
   private ComponentMapper<TransformComponent> tm = ComponentMapper.getFor(TransformComponent.class);
+  private ComponentMapper<StateComponent> sm = ComponentMapper.getFor(StateComponent.class);
 
   public RenderSystem(Batch batch) {
     this.batch = batch;
@@ -38,12 +40,16 @@ public class RenderSystem extends EntitySystem {
       TextureRegionComponent textureRegionComponent = trm.get(entity);
       AnimationComponent animationComponent = am.get(entity);
       TransformComponent transform = tm.get(entity);
+      StateComponent state = sm.get(entity);
 
       if (textureRegionComponent != null) {
         batch.draw(textureRegionComponent.textureRegion.getTexture(), transform.pos.x, transform.pos.y,
             textureRegionComponent.width, textureRegionComponent.height);
       }
       else if (animationComponent != null) {
+        if (state != null && state.isInvincible && state.timeState % 0.5f < 0.25f) {
+          continue;
+        }
         float animationTimeElapsed = animationComponent.timeElapsed += deltaTime;
         TextureRegion texture = animationComponent.animation.getKeyFrame(animationTimeElapsed);
 
