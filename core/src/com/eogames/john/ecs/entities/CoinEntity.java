@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.Entity;
 import com.eogames.john.ecs.components.AnimationComponent;
 import com.eogames.john.ecs.components.CoinComponent;
 import com.eogames.john.ecs.components.PhysicComponent;
+import com.eogames.john.ecs.components.StateComponent;
 import com.eogames.john.ecs.components.TransformComponent;
 
 public class CoinEntity extends Entity {
@@ -22,5 +23,6 @@ public class CoinEntity extends Entity {
     add(new TransformComponent());
     add(new PhysicComponent());
     add(new AnimationComponent());
+    add(new StateComponent());
   }
 }

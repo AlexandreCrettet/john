@@ -47,11 +47,13 @@ public class RenderSystem extends EntitySystem {
             textureRegionComponent.width, textureRegionComponent.height);
       }
       else if (animationComponent != null) {
-        if (state != null && state.isInvincible && state.timeState % 0.5f < 0.25f) {
+        float animationTimeElapsed;
+        TextureRegion texture;
+        if (!hasToRender(state)) {
           continue;
         }
-        float animationTimeElapsed = animationComponent.timeElapsed += deltaTime;
-        TextureRegion texture = animationComponent.animation.getKeyFrame(animationTimeElapsed);
+        animationTimeElapsed = animationComponent.timeElapsed += deltaTime;
+        texture = getTexture(state, animationComponent, animationTimeElapsed);
 
         if (texture == null) {
           continue;
@@ -61,6 +63,24 @@ public class RenderSystem extends EntitySystem {
       }
     }
     drawScore();
+  }
+
+  private boolean hasToRender(StateComponent state) {
+    if (state != null && state.isInvincible && state.timeState % 0.5f < 0.25f) {
+      return false;
+    }
+    return true;
+  }
+
+  private TextureRegion getTexture(StateComponent state, AnimationComponent animation,
+                                   float animationTimeElapsed) {
+    if (state.isIdling) {
+      return animation.idlingAnimation.getKeyFrame(animationTimeElapsed);
+    }
+    else if (state.isRunning) {
+      return animation.runningAnimation.getKeyFrame(animationTimeElapsed);
+    }
+    return null;
   }
 
   private void drawScore() {
