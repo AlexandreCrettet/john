@@ -29,7 +29,7 @@ import com.eogames.john.ecs.systems.BonusSystem;
 import com.eogames.john.ecs.systems.EnemySystem;
 import com.eogames.john.ecs.systems.MovementSystem;
 import com.eogames.john.ecs.systems.RenderSystem;
-import com.eogames.john.ecs.system.LifeSystem;
+import com.eogames.john.ecs.systems.LifeSystem;
 import com.eogames.john.level.BaseLevel;
 import com.eogames.john.level.UiStage;
 import com.eogames.john.map.JohnMapRenderer;

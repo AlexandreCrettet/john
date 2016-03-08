@@ -10,4 +10,5 @@ public class StateComponent implements Component {
   public float timeState = 0.0f;
   public boolean hasBeenTouched = false;
   public boolean isInvincible = false;
+  public boolean isDead = false;
 }

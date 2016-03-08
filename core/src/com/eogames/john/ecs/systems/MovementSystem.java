@@ -59,6 +59,9 @@ public class MovementSystem extends IteratingSystem {
         checkCollisionWithTraps(state, transform, physic);
       }
     }
+    if (transform.pos.y < 0) {
+      state.isDead = true;
+    }
   }
 
   private void moveX(Entity entity, float deltaTime) {
