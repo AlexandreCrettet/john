@@ -44,7 +44,7 @@ import com.eogames.john.utils.LevelCallback;
 public final class TestLevel extends BaseLevel {
   private static String LEVELNAME = "Test Level";
   private static String LEVELMAPNAME = "level1.tmx";
-  private static float STARTINGLEVELY = 200f;
+  private static float STARTINGLEVELY = 240f;
 
   private Engine engine;
   private JohnEntity john;
@@ -125,7 +125,7 @@ public final class TestLevel extends BaseLevel {
   private void loadEcs() {
     ActionSystem actionSystem = new ActionSystem(uiStage);
     MovementSystem movementSystem = new MovementSystem(renderer.getMap());
-    RenderSystem renderSystem = new RenderSystem(batch);
+    RenderSystem renderSystem = new RenderSystem(batch, camera);
     LifeSystem lifeSystem = new LifeSystem();
 
     TextureAtlas spriteSheet = new TextureAtlas("sprites16.txt");
