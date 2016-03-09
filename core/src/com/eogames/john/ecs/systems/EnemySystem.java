@@ -5,12 +5,16 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import com.eogames.john.ecs.components.EnemyComponent;
 import com.eogames.john.ecs.components.JohnComponent;
+import com.eogames.john.ecs.components.LifeComponent;
 import com.eogames.john.ecs.components.PhysicComponent;
+import com.eogames.john.ecs.components.StateComponent;
 import com.eogames.john.ecs.components.TransformComponent;
+import com.eogames.john.ecs.components.VelocityComponent;
 
 public class EnemySystem extends EntitySystem {
 
@@ -25,29 +29,31 @@ public class EnemySystem extends EntitySystem {
 
   @Override
   public void update(float deltaTime) {
-    Rectangle johnRectangle = new Rectangle(
-        john.getComponent(TransformComponent.class).pos.x,
-        john.getComponent(TransformComponent.class).pos.y,
-        john.getComponent(PhysicComponent.class).width,
-        john.getComponent(PhysicComponent.class).height
-    );
+    TransformComponent johnTransform = john.getComponent(TransformComponent.class);
+    PhysicComponent johnPhysic = john.getComponent(PhysicComponent.class);
+    VelocityComponent johnVelocity = john.getComponent(VelocityComponent.class);
+    StateComponent johnState = john.getComponent(StateComponent.class);
+    Rectangle johnRectangle = new Rectangle(johnTransform.pos.x, johnTransform.pos.y,
+        johnPhysic.width, johnPhysic.height);
     Rectangle enemyRectangle = new Rectangle();
     Rectangle intersection = new Rectangle();
+
     for (Entity enemy: enemies) {
-      enemyRectangle.set(
-          enemy.getComponent(TransformComponent.class).pos.x,
-          enemy.getComponent(TransformComponent.class).pos.y,
-          enemy.getComponent(PhysicComponent.class).width,
-          enemy.getComponent(PhysicComponent.class).height
-      );
-      // TODO: Fix top collision
+      TransformComponent enemyTransform = enemy.getComponent(TransformComponent.class);
+      PhysicComponent enemyPhysic = enemy.getComponent(PhysicComponent.class);
+      enemyRectangle.set(enemyTransform.pos.x, enemyTransform.pos.y,
+          enemyPhysic.width, enemyPhysic.height);
+
       if (Intersector.intersectRectangles(johnRectangle, enemyRectangle, intersection)) {
-        if(intersection.y > enemyRectangle.y) {
+        if(intersection.y - (johnVelocity.y - johnVelocity.gravity) * deltaTime >= enemyRectangle.y + enemyRectangle.height) {
           john.getComponent(JohnComponent.class).score += enemy.getComponent(EnemyComponent.class).score;
           getEngine().removeEntity(enemy);
           addedToEngine(getEngine());
-        } else {
-          // Dead
+        } else if (!johnState.isInvincible){
+          Gdx.app.error("intersection.y", intersection.y + "");
+          Gdx.app.error("enemyRect.y", enemyRectangle.y + "");
+          Gdx.app.error("enemyRect.height", enemyRectangle.height + "");
+          johnState.hasBeenTouched = true;
         }
       }
     }
