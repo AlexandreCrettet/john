@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -13,6 +14,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Timer;
 import com.eogames.john.John;
 import com.eogames.john.ecs.components.AnimationComponent;
 import com.eogames.john.ecs.components.EnemyComponent;
@@ -48,6 +50,7 @@ public final class TestLevel extends BaseLevel {
   private JohnEntity john;
   private SpriteBatch batch;
   private UiStage uiStage;
+  private boolean isLevelEnded = false;
 
   public TestLevel(AssetManager assetManager, LevelCallback levelCallback) {
     super(assetManager, levelCallback);
@@ -181,7 +184,37 @@ public final class TestLevel extends BaseLevel {
   }
 
   @Override
-  protected void endLevelState(boolean hasWon) {
-    callback.onLevelFinished(hasWon);
+  protected void endLevelState(final boolean hasWon) {
+    displayEnd(hasWon);
+    if (isLevelEnded) return;
+    isLevelEnded = true;
+    removeSystemsFromEngine();
+    Timer.schedule(new Timer.Task() {
+      @Override
+      public void run() {
+        callback.onLevelFinished(hasWon);
+      }
+    }, 2f);
+  }
+
+  private void displayEnd(boolean hasWon) {
+    BitmapFont bitmap = new BitmapFont();
+    String hasWonStr = hasWon ? "Level ended !" : "John is dead...";
+
+    bitmap.setColor(1.0f, 1.0f, 1.0f, 1.0f);
+    batch.begin();
+    bitmap.draw(batch, hasWonStr, camera.position.x, camera.position.y);
+    batch.end();
+  }
+
+  private void removeSystemsFromEngine() {
+    engine.removeEntity(john);
+    engine.removeSystem(engine.getSystem(ActionSystem.class));
+    engine.removeSystem(engine.getSystem(MovementSystem.class));
+    engine.removeSystem(engine.getSystem(RenderSystem.class));
+    engine.removeSystem(engine.getSystem(LifeSystem.class));
+    engine.removeSystem(engine.getSystem(BonusSystem.class));
+    engine.removeSystem(engine.getSystem(EnemySystem.class));
+    engine.removeSystem(engine.getSystem(StateSystem.class));
   }
 }
