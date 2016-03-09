@@ -9,15 +9,18 @@ import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.eogames.john.camera.LevelCamera;
 import com.eogames.john.ecs.components.AnimationComponent;
 import com.eogames.john.ecs.components.JohnComponent;
 import com.eogames.john.ecs.components.StateComponent;
 import com.eogames.john.ecs.components.TransformComponent;
 import com.eogames.john.ecs.components.TextureRegionComponent;
+import com.eogames.john.utils.CameraUtils;
 
 public class RenderSystem extends EntitySystem {
   private final BitmapFont bitmap;
   private final Batch batch;
+  private final LevelCamera camera;
   private ImmutableArray<Entity> entities;
 
   private ComponentMapper<TextureRegionComponent> trm = ComponentMapper.getFor(TextureRegionComponent.class);
@@ -25,8 +28,9 @@ public class RenderSystem extends EntitySystem {
   private ComponentMapper<TransformComponent> tm = ComponentMapper.getFor(TransformComponent.class);
   private ComponentMapper<StateComponent> sm = ComponentMapper.getFor(StateComponent.class);
 
-  public RenderSystem(Batch batch) {
+  public RenderSystem(Batch batch, LevelCamera camera) {
     this.batch = batch;
+    this.camera = camera;
     bitmap = new BitmapFont();
   }
 
@@ -86,6 +90,7 @@ public class RenderSystem extends EntitySystem {
   private void drawScore() {
     Entity john = getEngine().getEntitiesFor(Family.one(JohnComponent.class).get()).first();
     bitmap.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-    bitmap.draw(batch, "Score: " + john.getComponent(JohnComponent.class).score, 25, 375);
+    bitmap.draw(batch, "Score: " + john.getComponent(JohnComponent.class).score,
+        camera.position.x - CameraUtils.VIEWPORTWIDTH / 2 + 25, camera.position.y + CameraUtils.VIEWPORTHEIGHT / 2 - 30);
   }
 }
