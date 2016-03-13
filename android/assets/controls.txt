@@ -1,0 +1,47 @@
+controls.png
+size: 498, 134
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+button
+  rotate: false
+  xy: 394, 1
+  size: 103, 65
+  orig: 128, 128
+  offset: 14, 30
+  index: 0
+button
+  rotate: false
+  xy: 261, 1
+  size: 65, 103
+  orig: 128, 128
+  offset: 33, 11
+  index: 1
+button
+  rotate: false
+  xy: 394, 68
+  size: 103, 65
+  orig: 128, 128
+  offset: 14, 30
+  index: 2
+button
+  rotate: false
+  xy: 328, 1
+  size: 64, 103
+  orig: 128, 128
+  offset: 33, 11
+  index: 3
+button
+  rotate: false
+  xy: 1, 1
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 4
+button
+  rotate: false
+  xy: 131, 1
+  size: 128, 127
+  orig: 128, 128
+  offset: 0, 1
+  index: 5
