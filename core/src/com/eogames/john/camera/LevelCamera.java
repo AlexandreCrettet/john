@@ -6,8 +6,8 @@ import com.eogames.john.utils.CameraUtils;
 
 public class LevelCamera extends OrthographicCamera {
 
-  private int mapWidth;
-  private int mapHeight;
+  private final int mapWidth;
+  private final int mapHeight;
 
   public LevelCamera(TiledMap map) {
     mapWidth = map.getProperties().get("width", Integer.class) * map.getProperties().get("tilewidth", Integer.class);
